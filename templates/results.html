@@ -2,67 +2,176 @@
 <html>
 <head>
     <title>Results</title>
+    <meta charset="utf-8">
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <style>
+    
+    text {
+      font: 10px sans-serif;
+    }
+
+    table {
+        border-collapse:collapse;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        vertical-align: top;
+    }
+
+    </style>
 </head>
 <body>
-<h1>Entity and Keyword lists</h1>
+<h1>Results</h1>
 
-<h2>Resume Entity Data</h2>
-<ul>
-{% if job_entity_data %}
-{% for entity in job_entity_data %}
-    <li>
-        Text: <b>{{ entity[0] }}</b><br/>
-        Relevance: {{ entity[1] }}<br/>
-        Type: {{ entity[2] }}<br/>
-        Count: {{ entity[3] }}
-    </li>
-{% endfor %}
-{% endif %}
-</ul>
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Job Listing Data</th>
+        <th>Resume Data</th>
+    </tr>
+    <tr>
+        <td><h2>Entity</h2></td>
+        <td>
+            {% if data.job_entity_data %}
+            <ul>
+            {% for entity in data.job_entity_data %}
+                <li>
+                    Text: <b>{{ entity[0] }}</b><br/>
+                    Relevance: {{ entity[1] }}<br/>
+                    Type: {{ entity[2] }}<br/>
+                    Count: {{ entity[3] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+        <td>
+            {% if data.resume_entity_data %}
+            <ul>
+            {% for entity in data.resume_entity_data %}
+                <li>
+                    Text: <b>{{ entity[0] }}</b><br/>
+                    Relevance: {{ entity[1] }}<br/>
+                    Type: {{ entity[2] }}<br/>
+                    Count: {{ entity[3] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+    </tr>
 
-<h2>Resume Keyword Data</h2>
-<ul>
-{% if job_keyword_data %}
-{% for keyword in job_keyword_data %}
-    <li>
-        Text: <b>{{ keyword[0] }}</b><br/>
-        Relevance: {{ keyword[1] }}
-    </li>
-{% endfor %}
-</ul>
+    <tr>
+        <td><h2>Keyword</h2></td>
+        <td>
+            {% if data.job_keyword_data %}
+            <ul>
+            {% for keyword in data.job_keyword_data %}
+                <li>
+                    Text: <b>{{ keyword[0] }}</b><br/>
+                    Relevance: {{ keyword[1] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+        <td>
+            {% if data.resume_keyword_data %}
+            <ul>
+            {% for keyword in data.resume_keyword_data %}
+                <li>
+                    Text: <b>{{ keyword[0] }}</b><br/>
+                    Relevance: {{ keyword[1] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+    </tr>
 
-{% endif %}
-
-
-<h2>Job Listing Entity Data</h2>
-<ul>
-{% if resume_entity_data %}
-{% for entity in resume_entity_data %}
-    <li>
-        Text: <b>{{ entity[0] }}</b><br/>
-        Relevance: {{ entity[1] }}<br/>
-        Type: {{ entity[2] }}<br/>
-        Count: {{ entity[3] }}
-    </li>
-{% endfor %}
-{% endif %}
-</ul>
-
-<h2>Job Listing Keyword Data</h2>
-<ul>
-{% if resume_keyword_data %}
-{% for keyword in resume_keyword_data %}
-    <li>
-        Text: <b>{{ keyword[0] }}</b><br/>
-        Relevance: {{ keyword[1] }}
-    </li>
-{% endfor %}
-{% endif %}
-</ul>
+    <tr>
+        <td><h2>Concept</h2></td>
+        <td>
+            {% if data.job_concept_data %}
+            <ul>
+            {% for concept in data.job_concept_data %}
+                <li>
+                    Text: <b>{{ concept[0] }}</b><br/>
+                    Relevance: {{ concept[1] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+        <td>
+            {% if data.resume_concept_data %}
+            <ul>
+            {% for concept in data.resume_concept_data %}
+                <li>
+                    Text: <b>{{ concept[0] }}</b><br/>
+                    Relevance: {{ concept[1] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+    </tr>
+</table>
 
 <script type="text/javascript">
 var data = {{ data|tojson|safe }};
-console.log(data);
+// console.log(data);
+
+var diameter = 960,
+    format= d3.format(",d"),
+    color = d3.scale.category20c();
+
+var bubble = d3.layout.pack()
+    .sort(null)
+    .size([diameter, diameter])
+    .padding(1.5);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+    .attr("class", "bubble");
+
+
+
+var node = svg.selectAll(".node")
+  .data(bubble.nodes(classdata(data.resume_entity_data))
+  .filter(function(d) { return !d.children; }))
+.enter().append("g")
+  .attr("class", "node")
+  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+node.append("title")
+  .text(function(d) { return d.className + ": " + format(d.value); });
+
+node.append("circle")
+  .attr("r", function(d) { return d.r; })
+  .style("fill", function(d) { return color(d.packageName); });
+
+node.append("text")
+  .attr("dy", ".3em")
+  .style("text-anchor", "middle")
+  .text(function(d) { return d.className.substring(0, d.r / 3); });
+
+function classdata(d) {
+    var classes = [];
+    for (var i = d.length - 1; i >= 0; i--) {
+           classes.push({packageName:d[i][2], 
+                         className: d[i][0], 
+                         value: Math.floor(Math.pow(d[i][1]*100-50, 2))
+                        });
+       };
+    return {children: classes};
+}
+
+d3.select(self.frameElement).style("height", diameter + "px");
+
+
 </script>
 
 </body>

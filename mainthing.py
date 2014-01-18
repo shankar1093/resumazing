@@ -95,37 +95,30 @@ def getEntitiesFromURL():
     else:
         return render_template('entities.html', original=url, entities=data)
 
-def get_entities_from_text(text):
-    response = alchemyapi.entities('text',text, { 'sentiment':1 })
+# format = 'url' or 'text'
+# msg = 'the url' or 'the text data'
+def get_entities(format, msg):
+    response = alchemyapi.entities(format, msg, { 'sentiment':1 })
     if response['status'] == 'OK':
-        return [(e['text'], e['relevance'], e['type'], e['count']) for e in response['entities']]   
+        return [(e['text'], e['relevance'], e['type'], e['count'], e['sentiment']['type'], e['sentiment'].get('score') or 0) for e in response['entities']]   
     else:
         print('Error in entity extraction call: ', response['statusInfo'])
         return None
 
-
-def get_entities_from_url(url):
-    response = alchemyapi.entities('url',url, { 'sentiment':1 })
+def get_keywords(format, msg):
+    response = alchemyapi.keywords(format, msg, { 'sentiment':1 })
     if response['status'] == 'OK':
-        return [(e['text'], e['relevance'], e['type'], e['count']) for e in response['entities']]   
-    else:
-        print('Error in entity extraction call: ', response['statusInfo'])
-        return None
-
-def get_keywords_from_text(text):
-    response = alchemyapi.keywords('text',text, { 'sentiment':1 })
-    if response['status'] == 'OK':
-        return [(e['text'], e['relevance']) for e in response['keywords']]
+        return [(e['text'], e['relevance'], e['sentiment']['type'], e['sentiment'].get('score') or 0) for e in response['keywords']]
     else:
         print('Error in keyword extraction call: ', response['statusInfo'])
         return None
 
-def get_keywords_from_url(url):
-    response = alchemyapi.keywords('url',url, { 'sentiment':1 })
+def get_concepts(format, msg):
+    response = alchemyapi.concepts(format, msg, { 'sentiment':1 })
     if response['status'] == 'OK':
-        return [(e['text'], e['relevance']) for e in response['keywords']]
+        return [(e['text'], e['relevance']) for e in response['concepts']]
     else:
-        print('Error in keyword extraction call: ', response['statusInfo'])
+        print('Error in concept extraction call: ', response['statusInfo'])
         return None
 		
 def determine_string_match(job_string, applicant_string):
@@ -182,9 +175,16 @@ def doQuery():
     if not job_url:
         return "Need url parameter"
 
-    # Get Job Listing URL entity and keyword data
-    job_entity_data = get_entities_from_url(job_url)
-    job_keyword_data = get_keywords_from_url(job_url)
+    # Get Job Listing URL data
+    job_entity_data = get_entities('url', job_url)
+    job_keyword_data = get_keywords('url', job_url)
+    job_concept_data = get_concepts('url', job_url)
+
+    # Filter out City, StateOrCounty
+    job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
+                                      job_entity_data)
+    job_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
+                             job_entity_data)
 
     # Resume PDF file
     resume_entity_data = ""
@@ -199,24 +199,29 @@ def doQuery():
         # Get text from PDF file
         resume_text = getPDFContent(filepath)
 
-        # Get entity and keyword data from PDF text
-        resume_entity_data = get_entities_from_text(resume_text)
-        resume_keyword_data = get_keywords_from_text(resume_text)
+        # Get PDF text data
+        resume_entity_data = get_entities('text', resume_text)
+        resume_keyword_data = get_keywords('text', resume_text)
+        resume_concept_data = get_concepts('text', resume_text)
+
+        # Filter out City, StateOrCounty
+        resume_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
+                                             resume_entity_data)
+        resume_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
+                                 resume_entity_data)
+
         data = {"job_entity_data": job_entity_data, 
-                "resume_entity_data": resume_entity_data,
                 "job_keyword_data": job_keyword_data, 
-                "resume_keyword_data": resume_keyword_data}
+                "job_concept_data": job_concept_data,
+                "job_entity_location_data": job_entity_location_data,
+                "resume_entity_data": resume_entity_data,
+                "resume_keyword_data": resume_keyword_data,
+                "resume_concept_data": resume_concept_data,
+                "resume_entity_location_data": resume_entity_location_data}
     if format == 'json':
-        return jsonify(job_entity_data=job_entity_data, 
-                       resume_entity_data=resume_entity_data,
-                       job_keyword_data=job_keyword_data, 
-                       resume_keyword_data=resume_keyword_data)
+        return jsonify(**data)
     else:
-        return render_template('results.html', job_entity_data=job_entity_data, 
-                                               resume_entity_data=resume_entity_data,
-                                               job_keyword_data=job_keyword_data, 
-                                               resume_keyword_data=resume_keyword_data,
-                                               data=data)
+        return render_template('results.html', data=data)
 
 
 if __name__ == "__main__":
