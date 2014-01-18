@@ -1,0 +1,10 @@
+<!doctype html>
+<title>Keywords</title>
+<h1>Original Message</h1>
+<p>Message: "{{ original }}"</p>
+<h1>Keyword list</h1>
+<ul>
+{% for word in words.items() %}
+    <li>{{ word[0] }} : {{ word[1] }}</li>
+{% endfor %}
+</ul>
