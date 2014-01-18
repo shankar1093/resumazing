@@ -1,0 +1,28 @@
+<!doctype html>
+<title>Results</title>
+<h1>Entity lists</h1>
+<h2>Resume Entity Data</h2>
+<ul>
+{% for entity in job_entity_data %}
+    <li>
+        Text: <b>{{ entity[0] }}</b><br/>
+        Relevance: {{ entity[1] }}<br/>
+        Type: {{ entity[2] }}<br/>
+        Count: {{ entity[3] }}
+    </li>
+{% endfor %}
+</ul>
+
+<h2>Job Listing Entity Data</h2>
+<ul>
+{% for entity in resume_entity_data %}
+    <li>
+        Text: <b>{{ entity[0] }}</b><br/>
+        Relevance: {{ entity[1] }}<br/>
+        Type: {{ entity[2] }}<br/>
+        Count: {{ entity[3] }}
+    </li>
+{% endfor %}
+
+
+</ul>
