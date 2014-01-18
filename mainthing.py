@@ -77,6 +77,14 @@ def getEntities(query_type="TextGetRankedNamedEntities"):
             return r.text
     except requests.exceptions.ConnectionError as e:
         return "Connection Error"
+		
+def get_entities_from_url(url):
+	response = alchemyapi.entities('url',url, { 'sentiment':1 })
+	if response['status'] == 'OK':
+		return [(e['text'], e['relevance'], e['type']) for e in response['entities']]	
+	else:
+		print('Error in entity extraction call: ', response['statusInfo'])
+		return None
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
