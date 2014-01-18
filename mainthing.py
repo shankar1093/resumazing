@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask import jsonify
 from flask import send_from_directory
 from flask import render_template
 from flask import request, redirect, url_for
@@ -64,9 +65,7 @@ def uploaded_file(filename):
                                filename)
 
 @app.route("/keyword")
-@app.route("/keyword/")
-@app.route("/keyword/<query_type>")
-def getKeywords(query_type="TextGetRankedKeywords"):
+def getKeywords():
     msg = request.args.get('msg')
     words = get_keywords_from_text(msg)
     return render_template('keywords.html', original=msg, words=words)
@@ -99,7 +98,7 @@ def getEntitiesFromURL():
 def get_entities_from_text(text):
     response = alchemyapi.entities('text',text, { 'sentiment':1 })
     if response['status'] == 'OK':
-        return [(e['text'], e['relevance'], e['type']) for e in response['entities']]   
+        return [(e['text'], e['relevance'], e['type'], e['count']) for e in response['entities']]   
     else:
         print('Error in entity extraction call: ', response['statusInfo'])
         return None
@@ -108,7 +107,7 @@ def get_entities_from_text(text):
 def get_entities_from_url(url):
     response = alchemyapi.entities('url',url, { 'sentiment':1 })
     if response['status'] == 'OK':
-        return [(e['text'], e['relevance'], e['type']) for e in response['entities']]   
+        return [(e['text'], e['relevance'], e['type'], e['count']) for e in response['entities']]   
     else:
         print('Error in entity extraction call: ', response['statusInfo'])
         return None
@@ -131,13 +130,16 @@ def get_keywords_from_url(url):
 
 @app.route("/query", methods=['POST'])
 def doQuery():
+    format = request.form['format']
+
     # Job Listing URL
     job_url = request.form['url']
     if not job_url:
         return "Need url parameter"
+
+    # Get Job Listing URL entity and keyword data
     job_entity_data = get_entities_from_url(job_url)
-    if not job_entity_data:
-        return "Error getting url data"
+    job_keyword_data = get_keywords_from_url(job_url)
 
     # Resume PDF file
     resume_entity_data = ""
@@ -152,11 +154,24 @@ def doQuery():
         # Get text from PDF file
         resume_text = getPDFContent(filepath)
 
-        # Get Entity data from PDF text
+        # Get entity and keyword data from PDF text
         resume_entity_data = get_entities_from_text(resume_text)
-
-    return render_template('results.html', job_entity_data=job_entity_data, 
-                                            resume_entity_data=resume_entity_data)
+        resume_keyword_data = get_keywords_from_text(resume_text)
+        data = {"job_entity_data": job_entity_data, 
+                "resume_entity_data": resume_entity_data,
+                "job_keyword_data": job_keyword_data, 
+                "resume_keyword_data": resume_keyword_data}
+    if format == 'json':
+        return jsonify(job_entity_data=job_entity_data, 
+                       resume_entity_data=resume_entity_data,
+                       job_keyword_data=job_keyword_data, 
+                       resume_keyword_data=resume_keyword_data)
+    else:
+        return render_template('results.html', job_entity_data=job_entity_data, 
+                                               resume_entity_data=resume_entity_data,
+                                               job_keyword_data=job_keyword_data, 
+                                               resume_keyword_data=resume_keyword_data,
+                                               data=data)
 
 
 if __name__ == "__main__":

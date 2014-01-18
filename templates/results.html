@@ -1,8 +1,14 @@
 <!doctype html>
-<title>Results</title>
-<h1>Entity lists</h1>
+<html>
+<head>
+    <title>Results</title>
+</head>
+<body>
+<h1>Entity and Keyword lists</h1>
+
 <h2>Resume Entity Data</h2>
 <ul>
+{% if job_entity_data %}
 {% for entity in job_entity_data %}
     <li>
         Text: <b>{{ entity[0] }}</b><br/>
@@ -11,10 +17,26 @@
         Count: {{ entity[3] }}
     </li>
 {% endfor %}
+{% endif %}
 </ul>
+
+<h2>Resume Keyword Data</h2>
+<ul>
+{% if job_keyword_data %}
+{% for keyword in job_keyword_data %}
+    <li>
+        Text: <b>{{ keyword[0] }}</b><br/>
+        Relevance: {{ keyword[1] }}
+    </li>
+{% endfor %}
+</ul>
+
+{% endif %}
+
 
 <h2>Job Listing Entity Data</h2>
 <ul>
+{% if resume_entity_data %}
 {% for entity in resume_entity_data %}
     <li>
         Text: <b>{{ entity[0] }}</b><br/>
@@ -23,6 +45,25 @@
         Count: {{ entity[3] }}
     </li>
 {% endfor %}
-
-
+{% endif %}
 </ul>
+
+<h2>Job Listing Keyword Data</h2>
+<ul>
+{% if resume_keyword_data %}
+{% for keyword in resume_keyword_data %}
+    <li>
+        Text: <b>{{ keyword[0] }}</b><br/>
+        Relevance: {{ keyword[1] }}
+    </li>
+{% endfor %}
+{% endif %}
+</ul>
+
+<script type="text/javascript">
+var data = {{ data|tojson|safe }};
+console.log(data);
+</script>
+
+</body>
+</html>

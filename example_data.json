@@ -1,0 +1,836 @@
+{
+  "job_entity_data": [
+    [
+      "Google",
+      "0.845981",
+      "Company",
+      "6"
+    ],
+    [
+      "Amazon",
+      "0.744682",
+      "Company",
+      "4"
+    ],
+    [
+      "Georgia Tech",
+      "0.689297",
+      "Organization",
+      "4"
+    ],
+    [
+      "Sameer Ansari",
+      "0.629515",
+      "Person",
+      "3"
+    ],
+    [
+      "App Engine",
+      "0.578702",
+      "FieldTerminology",
+      "3"
+    ],
+    [
+      "SpaceX",
+      "0.557409",
+      "Company",
+      "2"
+    ],
+    [
+      "EC2",
+      "0.556716",
+      "Technology",
+      "2"
+    ],
+    [
+      "mobile application",
+      "0.546524",
+      "FieldTerminology",
+      "3"
+    ],
+    [
+      "AGU",
+      "0.535706",
+      "Organization",
+      "2"
+    ],
+    [
+      "Arduino Uno",
+      "0.534038",
+      "Technology",
+      "2"
+    ],
+    [
+      "San Francisco",
+      "0.510329",
+      "City",
+      "2"
+    ],
+    [
+      "IEEE",
+      "0.508732",
+      "Organization",
+      "1"
+    ],
+    [
+      "CESM",
+      "0.506294",
+      "Degree",
+      "2"
+    ],
+    [
+      "Android",
+      "0.50138",
+      "OperatingSystem",
+      "2"
+    ],
+    [
+      "NYU Abu Dhabi",
+      "0.499161",
+      "Organization",
+      "1"
+    ],
+    [
+      "NREC",
+      "0.488108",
+      "Organization",
+      "3"
+    ],
+    [
+      "Cloud Solutions",
+      "0.482306",
+      "Company",
+      "1"
+    ],
+    [
+      "IEEE Computer Society",
+      "0.477976",
+      "PrintMedia",
+      "1"
+    ],
+    [
+      "researcher",
+      "0.475287",
+      "JobTitle",
+      "2"
+    ],
+    [
+      "NVIDIA",
+      "0.473194",
+      "Company",
+      "1"
+    ],
+    [
+      "Carnegie Mellon",
+      "0.468507",
+      "Company",
+      "1"
+    ],
+    [
+      "LinkedIn",
+      "0.459715",
+      "Company",
+      "1"
+    ],
+    [
+      "Avionics Block Diagram",
+      "0.44067",
+      "Facility",
+      "1"
+    ],
+    [
+      "Amazon Music",
+      "0.438324",
+      "Company",
+      "1"
+    ],
+    [
+      "US Navy",
+      "0.432274",
+      "Organization",
+      "1"
+    ],
+    [
+      "representative",
+      "0.426525",
+      "JobTitle",
+      "1"
+    ],
+    [
+      "IEEE Software",
+      "0.425119",
+      "PrintMedia",
+      "1"
+    ],
+    [
+      "CA",
+      "0.419436",
+      "StateOrCounty",
+      "2"
+    ],
+    [
+      "Hawthorne",
+      "0.419348",
+      "City",
+      "1"
+    ],
+    [
+      "data warehouse",
+      "0.419074",
+      "FieldTerminology",
+      "1"
+    ],
+    [
+      "CESM Climate",
+      "0.413528",
+      "Company",
+      "1"
+    ],
+    [
+      "Texas",
+      "0.410042",
+      "StateOrCounty",
+      "1"
+    ],
+    [
+      "red line",
+      "0.408915",
+      "FieldTerminology",
+      "1"
+    ],
+    [
+      "Calif.",
+      "0.407256",
+      "StateOrCounty",
+      "1"
+    ],
+    [
+      "collision detection",
+      "0.406671",
+      "FieldTerminology",
+      "1"
+    ],
+    [
+      "Frank Dellaert",
+      "0.406484",
+      "Person",
+      "1"
+    ],
+    [
+      "NOAA",
+      "0.40274",
+      "Organization",
+      "1"
+    ],
+    [
+      "kinects",
+      "0.40165",
+      "Company",
+      "1"
+    ],
+    [
+      "Voronoi Diagrams",
+      "0.401028",
+      "Facility",
+      "1"
+    ],
+    [
+      "Avionics",
+      "0.399671",
+      "Technology",
+      "1"
+    ],
+    [
+      "Team leader",
+      "0.397604",
+      "JobTitle",
+      "1"
+    ],
+    [
+      "Xbee",
+      "0.393872",
+      "Technology",
+      "1"
+    ],
+    [
+      "German House of Representatives",
+      "0.393654",
+      "Organization",
+      "1"
+    ],
+    [
+      "project manager",
+      "0.392428",
+      "JobTitle",
+      "1"
+    ],
+    [
+      "Mike Stilman",
+      "0.389069",
+      "Person",
+      "1"
+    ],
+    [
+      "Cape Canaveral",
+      "0.388406",
+      "City",
+      "1"
+    ],
+    [
+      "Princeton Atmospheric",
+      "0.387968",
+      "GeographicFeature",
+      "1"
+    ],
+    [
+      "Fluke",
+      "0.386536",
+      "Company",
+      "1"
+    ],
+    [
+      "Developer",
+      "0.383489",
+      "JobTitle",
+      "1"
+    ],
+    [
+      "V. Balaji",
+      "0.383192",
+      "Person",
+      "1"
+    ]
+  ],
+  "job_keyword_data": [
+    [
+      "Google Cloud Platform",
+      "0.907189"
+    ],
+    [
+      "sample mobile application",
+      "0.870335"
+    ],
+    [
+      "Amazon EC2 Cloud",
+      "0.868705"
+    ],
+    [
+      "Sameer Ansari",
+      "0.86277"
+    ],
+    [
+      "Cloud Platform team",
+      "0.853528"
+    ],
+    [
+      "Climate Cloud Configurator",
+      "0.84797"
+    ],
+    [
+      "App Engine",
+      "0.833162"
+    ],
+    [
+      "Cloud Endpoints",
+      "0.830572"
+    ],
+    [
+      "Cloud Storage",
+      "0.827665"
+    ],
+    [
+      "bad guy",
+      "0.824489"
+    ],
+    [
+      "cloud ecosystem",
+      "0.82439"
+    ],
+    [
+      "Google App Engine",
+      "0.816119"
+    ],
+    [
+      "Voronoi Uncertainty Fields",
+      "0.813035"
+    ],
+    [
+      "Amazon EC2 Cloud.",
+      "0.811404"
+    ],
+    [
+      "Earth Science Data",
+      "0.808548"
+    ],
+    [
+      "IEEE International Conference",
+      "0.803775"
+    ],
+    [
+      "remote video data",
+      "0.802958"
+    ],
+    [
+      "data warehouse extension",
+      "0.800445"
+    ],
+    [
+      "inhouse data warehousing",
+      "0.798981"
+    ],
+    [
+      "CESM Climate model",
+      "0.798149"
+    ],
+    [
+      "team lead",
+      "0.797136"
+    ],
+    [
+      "Dragon spacecraft flight",
+      "0.796928"
+    ],
+    [
+      "San Francisco",
+      "0.796076"
+    ],
+    [
+      "Google technologies",
+      "0.795631"
+    ],
+    [
+      "Fermi graphics cards",
+      "0.795104"
+    ],
+    [
+      "Georgia Tech",
+      "0.794685"
+    ],
+    [
+      "Compute Engine",
+      "0.794636"
+    ],
+    [
+      "Falcon rocket flight",
+      "0.79456"
+    ],
+    [
+      "Cloud Solutions",
+      "0.794053"
+    ],
+    [
+      "electronic components",
+      "0.793337"
+    ],
+    [
+      "avionics team",
+      "0.792896"
+    ],
+    [
+      "Abu Dhabi Hackathon",
+      "0.792498"
+    ],
+    [
+      "compliance control interface",
+      "0.79221"
+    ],
+    [
+      "data portal interfaces",
+      "0.791631"
+    ],
+    [
+      "TVC angle",
+      "0.791269"
+    ],
+    [
+      "Hawthorne mission control",
+      "0.790808"
+    ],
+    [
+      "novel motion planning",
+      "0.790765"
+    ],
+    [
+      "large-scale distributed simulations",
+      "0.790645"
+    ],
+    [
+      "office cubicle environment",
+      "0.789914"
+    ],
+    [
+      "controls TVC angle",
+      "0.789467"
+    ],
+    [
+      "ongoing development project",
+      "0.789427"
+    ],
+    [
+      "new GNC Guidance",
+      "0.789285"
+    ],
+    [
+      "2-wheeled humanoid robot",
+      "0.788757"
+    ],
+    [
+      "climate model output",
+      "0.788548"
+    ],
+    [
+      "arduino uno",
+      "0.788429"
+    ],
+    [
+      "Email LinkedIn Internships",
+      "0.787977"
+    ],
+    [
+      "modifies TVC angle",
+      "0.787331"
+    ],
+    [
+      "GY-521 gyroscope/accelerometer sensor",
+      "0.786559"
+    ],
+    [
+      "onboard IR sensor",
+      "0.785656"
+    ],
+    [
+      "intelligent visual interface",
+      "0.785045"
+    ]
+  ],
+  "resume_entity_data": [
+    [
+      "Carnegie Mellon University Pittsburgh",
+      "0.792864",
+      "Organization",
+      "1"
+    ],
+    [
+      "Bachelor of Science in Mechanical Engineering",
+      "0.681068",
+      "ProfessionalDegree",
+      "1"
+    ],
+    [
+      "Master of Science in Mechanical Engineering",
+      "0.670463",
+      "Degree",
+      "1"
+    ],
+    [
+      "Carnegie Mellon Robotics",
+      "0.661752",
+      "Company",
+      "1"
+    ],
+    [
+      "Carnegie Involvement Association",
+      "0.655755",
+      "Organization",
+      "1"
+    ],
+    [
+      "NASA",
+      "0.643155",
+      "Organization",
+      "2"
+    ],
+    [
+      "Gerald Leon Carlson",
+      "0.612749",
+      "Person",
+      "1"
+    ],
+    [
+      "PA",
+      "0.611598",
+      "StateOrCounty",
+      "2"
+    ],
+    [
+      "Controls Numerical Methods Mechanical Systems",
+      "0.60008",
+      "PrintMedia",
+      "1"
+    ],
+    [
+      "Residential academy",
+      "0.563373",
+      "Organization",
+      "2"
+    ],
+    [
+      "Virginia Aerospace Science and Technology Scholars",
+      "0.563082",
+      "Organization",
+      "1"
+    ],
+    [
+      "NASA Langley Research Center",
+      "0.558572",
+      "Facility",
+      "1"
+    ],
+    [
+      "Aerospace Engineering",
+      "0.549177",
+      "FieldTerminology",
+      "1"
+    ],
+    [
+      "Statics Stress Analysis Dynamics Thermodynamics",
+      "0.544113",
+      "PrintMedia",
+      "1"
+    ],
+    [
+      "VA",
+      "0.5249",
+      "StateOrCounty",
+      "1"
+    ],
+    [
+      "Pittsburgh",
+      "0.521942",
+      "City",
+      "1"
+    ],
+    [
+      "Langley",
+      "0.480827",
+      "City",
+      "1"
+    ],
+    [
+      "Afton Chemical Corporation",
+      "0.473094",
+      "Company",
+      "1"
+    ],
+    [
+      "Intern",
+      "0.444232",
+      "JobTitle",
+      "1"
+    ],
+    [
+      "VP",
+      "0.408884",
+      "JobTitle",
+      "1"
+    ],
+    [
+      "Chairman",
+      "0.407624",
+      "JobTitle",
+      "1"
+    ]
+  ],
+  "resume_keyword_data": [
+    [
+      "Carnegie Involvement Association",
+      "0.98997"
+    ],
+    [
+      "EDUCATION Carnegie Mellon",
+      "0.960958"
+    ],
+    [
+      "EXPERIENCE Carnegie Mellon",
+      "0.951767"
+    ],
+    [
+      "Carnegie Mellon Kiltie",
+      "0.936019"
+    ],
+    [
+      "LEADERSHIP Carnegie Involvement",
+      "0.908837"
+    ],
+    [
+      "EXPERIENCE Summer Intern",
+      "0.882174"
+    ],
+    [
+      "Carlson Current Address",
+      "0.88169"
+    ],
+    [
+      "research Gained experience",
+      "0.879712"
+    ],
+    [
+      "Experimentation Mechatronic Design",
+      "0.877252"
+    ],
+    [
+      "Viscous Flow Design",
+      "0.87511"
+    ],
+    [
+      "Methods Mechanical Systems",
+      "0.874551"
+    ],
+    [
+      "Association EXPERIENCE Chairman",
+      "0.874087"
+    ],
+    [
+      "commission motorcycle dynamometer",
+      "0.872728"
+    ],
+    [
+      "Extensive shop experience",
+      "0.86954"
+    ],
+    [
+      "NASA Langley Research",
+      "0.868097"
+    ],
+    [
+      "current enrollment **",
+      "0.864975"
+    ],
+    [
+      "Biomechatronic Design* Bio-Inspired",
+      "0.858827"
+    ],
+    [
+      "Virginia Aerospace Science",
+      "0.857796"
+    ],
+    [
+      "enrollment RELEVANT Afton",
+      "0.857509"
+    ],
+    [
+      "current scholars Goal",
+      "0.856062"
+    ],
+    [
+      "Fluids Dynamic Systems",
+      "0.855173"
+    ],
+    [
+      "Mechanical Engineering",
+      "0.854012"
+    ],
+    [
+      "Association Mechanic 2009-Present",
+      "0.853771"
+    ],
+    [
+      "Mobile Robot Design*",
+      "0.852611"
+    ],
+    [
+      "COURSEWORK Statics Stress",
+      "0.850209"
+    ],
+    [
+      "2009-present CURRICULAR VP",
+      "0.849993"
+    ],
+    [
+      "Oils department Summer",
+      "0.847649"
+    ],
+    [
+      "Heat Transfer Fluid",
+      "0.847478"
+    ],
+    [
+      "human-powered racing vehicles",
+      "0.847423"
+    ],
+    [
+      "Robot Design** Computational",
+      "0.846905"
+    ],
+    [
+      "2011-2012 Coordinated operations",
+      "0.841957"
+    ],
+    [
+      "Analysis Dynamics Thermodynamics",
+      "0.839791"
+    ],
+    [
+      "Utilized CAD software",
+      "0.837832"
+    ],
+    [
+      "VA Undergraduate Assistant",
+      "0.837237"
+    ],
+    [
+      "hand tools Computers",
+      "0.835634"
+    ],
+    [
+      "design teams",
+      "0.801095"
+    ],
+    [
+      "Permanent Address",
+      "0.794412"
+    ],
+    [
+      "NASA engineers",
+      "0.793691"
+    ],
+    [
+      "University Pittsburgh",
+      "0.793073"
+    ],
+    [
+      "PA Master",
+      "0.792986"
+    ],
+    [
+      "hydraulic systems",
+      "0.788852"
+    ],
+    [
+      "Foxvale Way",
+      "0.788198"
+    ],
+    [
+      "full-time job",
+      "0.784158"
+    ],
+    [
+      "gmail.com OBJECTIVE",
+      "0.783651"
+    ],
+    [
+      "Led project",
+      "0.783068"
+    ],
+    [
+      "automotive industry",
+      "0.782747"
+    ],
+    [
+      "Leadership role",
+      "0.782605"
+    ],
+    [
+      "band saw",
+      "0.782302"
+    ],
+    [
+      "Technology Scholars",
+      "0.781943"
+    ],
+    [
+      "Marching Band",
+      "0.781769"
+    ]
+  ]
+}
