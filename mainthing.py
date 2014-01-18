@@ -173,7 +173,7 @@ def determine_degree_match(job_degrees, applicant_degrees):
 	return 1. #Return 0.0 if no match, 1.0 if match, 1.5 if requirements exceeded
 	
 def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, applicant_keywords, applicant_concepts, clusters):
-	text(x) = x[0]
+	text = lambda x: x[0]
 	cluster = filter(lambda x : company in x, clusters)
 	#Points for having a relevant degree
 	job_degrees = map(text,filter(lambda x : x[2] == 'ProfessionalDegree', job_entities))
@@ -197,7 +197,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
 	#Points for using relevant concepts
 	combinations = [[(x, y) for x in map(text, job_concepts)] for y in map(text, applicant_concepts)]
 	concept_score = max(2., sum([determine_string_match(x, y) for (x, y) in combinations]))
-	final_score = degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept score
+	final_score = degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score
 	
 	return final_score
 
@@ -246,7 +246,10 @@ def doQuery():
         resume_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
                                  resume_entity_data)
 
-        data = {"job_entity_data": job_entity_data, 
+        final_score = score_resume(job_entity_data, job_keyword_data, job_concept_data, resume_entity_data, resume_keyword_data, resume_concept_data, [])
+
+        data = {"final_score": final_score,
+                "job_entity_data": job_entity_data, 
                 "job_keyword_data": job_keyword_data, 
                 "job_concept_data": job_concept_data,
                 "job_entity_location_data": job_entity_location_data,
