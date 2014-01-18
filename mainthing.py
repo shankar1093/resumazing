@@ -10,6 +10,9 @@ from xml.etree.ElementTree import ParseError
 import sys
 import pyPdf
 
+from alchemyapi import AlchemyAPI
+alchemyapi = AlchemyAPI()
+
 def getPDFContent(path):
     content = ""
     # Load PDF into pyPDF
@@ -123,6 +126,7 @@ def getEntitiesFromURL():
     data = get_entities_from_url(url)
     if not data:
         return "Error getting url data"
+    return render_template('entities.html', original=url, entities=data)
 
 def get_entities_from_url(url):
 	response = alchemyapi.entities('url',url, { 'sentiment':1 })
