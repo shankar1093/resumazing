@@ -8,6 +8,20 @@ from pdfminer.pdfparser import PDFParser
 import requests
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import ParseError
+import sys
+import pyPdf
+
+def getPDFContent(path):
+    content = ""
+    # Load PDF into pyPDF
+    pdf = pyPdf.PdfFileReader(file(path, "rb"))
+    # Iterate pages
+    for i in range(0, pdf.getNumPages()):
+        # Extract text from page and add to content
+        content += pdf.getPage(i).extractText() + " \n"
+    # Collapse whitespace
+    content = u" ".join(content.replace(u"\xa0", u" ").strip().split())
+    return content
 
 # Secret Key
 API_KEY = "bae55da9dafaa2c7b9e8d78e678d69c4ce210ddf"
@@ -51,8 +65,11 @@ def upload_file():
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            text = getPDFContent(filepath)
             print "File uploaded successfully"
+            return render_template('loadResume.html', text=text)
             # return redirect(url_for('uploaded_file',
             #                         filename=filename))
     return render_template('loadResume.html')
