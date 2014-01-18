@@ -41,10 +41,10 @@ def parseRankedEntities(xml_str):
 def hello():    
     return render_template('loadResume.html')
 
-@app.route("/test")
-@app.route("/test/")
-@app.route("/test/<query_type>")
-def test(query_type="TextGetRankedKeywords"):
+@app.route("/keyword")
+@app.route("/keyword/")
+@app.route("/keyword/<query_type>")
+def getKeywords(query_type="TextGetRankedKeywords"):
     msg = request.args.get('msg')
     if not msg:
         return "Need to add ?msg= parameter"

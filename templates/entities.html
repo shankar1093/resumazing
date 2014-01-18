@@ -3,6 +3,41 @@
 <h1>Original Message</h1>
 <p>Message: "{{ original }}"</p>
 <h1>Entity list</h1>
+
+<h2>Degrees</h2>
+{% for entity in entities %}
+{% if entity[0] == "Degree" %}
+    <li>
+        Text: {{ entity[3] }}<br/>
+        Relevance: {{ entity[1] }}<br/>
+        Count: {{ entity[2] }}
+    </li>
+{% endif %}
+{% endfor %}
+
+<h2>Organizations</h2>
+{% for entity in entities %}
+{% if entity[0] == "Organization" %}
+    <li>
+        Text: {{ entity[3] }}<br/>
+        Relevance: {{ entity[1] }}<br/>
+        Count: {{ entity[2] }}
+    </li>
+{% endif %}
+{% endfor %}
+
+<h2>Companies</h2>
+{% for entity in entities %}
+{% if entity[0] == "Company" %}
+    <li>
+        Text: {{ entity[3] }}<br/>
+        Relevance: {{ entity[1] }}<br/>
+        Count: {{ entity[2] }}
+    </li>
+{% endif %}
+{% endfor %}
+
+<h2>All</h2>
 <ul>
 {% for entity in entities %}
     <li>
@@ -11,4 +46,5 @@
         Relevance: {{ entity[1] }}, Count: {{ entity[2] }}
     </li>
 {% endfor %}
+
 </ul>
