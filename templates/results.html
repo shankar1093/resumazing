@@ -2,63 +2,117 @@
 <html>
 <head>
     <title>Results</title>
+
+    <style>
+
+    table {
+        border-collapse:collapse;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        vertical-align: top;
+    }
+
+    </style>
 </head>
 <body>
-<h1>Entity and Keyword lists</h1>
+<h1>Results</h1>
 
-<h2>Resume Entity Data</h2>
-<ul>
-{% if job_entity_data %}
-{% for entity in job_entity_data %}
-    <li>
-        Text: <b>{{ entity[0] }}</b><br/>
-        Relevance: {{ entity[1] }}<br/>
-        Type: {{ entity[2] }}<br/>
-        Count: {{ entity[3] }}
-    </li>
-{% endfor %}
-{% endif %}
-</ul>
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Resume Data</th>
+        <th>Job Listing Data</th>
+    </tr>
+    <tr>
+        <td><h2>Entity</h2></td>
+        <td>
+            {% if data.job_entity_data %}
+            <ul>
+            {% for entity in data.job_entity_data %}
+                <li>
+                    Text: <b>{{ entity[0] }}</b><br/>
+                    Relevance: {{ entity[1] }}<br/>
+                    Type: {{ entity[2] }}<br/>
+                    Count: {{ entity[3] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+        <td>
+            {% if data.resume_entity_data %}
+            <ul>
+            {% for entity in data.resume_entity_data %}
+                <li>
+                    Text: <b>{{ entity[0] }}</b><br/>
+                    Relevance: {{ entity[1] }}<br/>
+                    Type: {{ entity[2] }}<br/>
+                    Count: {{ entity[3] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+    </tr>
 
-<h2>Resume Keyword Data</h2>
-<ul>
-{% if job_keyword_data %}
-{% for keyword in job_keyword_data %}
-    <li>
-        Text: <b>{{ keyword[0] }}</b><br/>
-        Relevance: {{ keyword[1] }}
-    </li>
-{% endfor %}
-</ul>
+    <tr>
+        <td><h2>Keyword</h2></td>
+        <td>
+            {% if data.job_keyword_data %}
+            <ul>
+            {% for keyword in data.job_keyword_data %}
+                <li>
+                    Text: <b>{{ keyword[0] }}</b><br/>
+                    Relevance: {{ keyword[1] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+        <td>
+            {% if data.resume_keyword_data %}
+            <ul>
+            {% for keyword in data.resume_keyword_data %}
+                <li>
+                    Text: <b>{{ keyword[0] }}</b><br/>
+                    Relevance: {{ keyword[1] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+    </tr>
 
-{% endif %}
-
-
-<h2>Job Listing Entity Data</h2>
-<ul>
-{% if resume_entity_data %}
-{% for entity in resume_entity_data %}
-    <li>
-        Text: <b>{{ entity[0] }}</b><br/>
-        Relevance: {{ entity[1] }}<br/>
-        Type: {{ entity[2] }}<br/>
-        Count: {{ entity[3] }}
-    </li>
-{% endfor %}
-{% endif %}
-</ul>
-
-<h2>Job Listing Keyword Data</h2>
-<ul>
-{% if resume_keyword_data %}
-{% for keyword in resume_keyword_data %}
-    <li>
-        Text: <b>{{ keyword[0] }}</b><br/>
-        Relevance: {{ keyword[1] }}
-    </li>
-{% endfor %}
-{% endif %}
-</ul>
+    <tr>
+        <td><h2>Concept</h2></td>
+        <td>
+            {% if data.job_concept_data %}
+            <ul>
+            {% for concept in data.job_concept_data %}
+                <li>
+                    Text: <b>{{ concept[0] }}</b><br/>
+                    Relevance: {{ concept[1] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+        <td>
+            {% if data.resume_concept_data %}
+            <ul>
+            {% for concept in data.resume_concept_data %}
+                <li>
+                    Text: <b>{{ concept[0] }}</b><br/>
+                    Relevance: {{ concept[1] }}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+    </tr>
+</table>
 
 <script type="text/javascript">
 var data = {{ data|tojson|safe }};
