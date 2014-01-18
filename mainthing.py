@@ -135,6 +135,12 @@ def doQuery():
     job_keyword_data = get_keywords('url', job_url)
     job_concept_data = get_concepts('url', job_url)
 
+    # Filter out City, StateOrCounty
+    job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
+                                      job_entity_data)
+    job_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
+                             job_entity_data)
+
     # Resume PDF file
     resume_entity_data = ""
     file = request.files['file']
@@ -153,12 +159,20 @@ def doQuery():
         resume_keyword_data = get_keywords('text', resume_text)
         resume_concept_data = get_concepts('text', resume_text)
 
+        # Filter out City, StateOrCounty
+        resume_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
+                                             resume_entity_data)
+        resume_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
+                                 resume_entity_data)
+
         data = {"job_entity_data": job_entity_data, 
                 "job_keyword_data": job_keyword_data, 
                 "job_concept_data": job_concept_data,
+                "job_entity_location_data": job_entity_location_data,
                 "resume_entity_data": resume_entity_data,
                 "resume_keyword_data": resume_keyword_data,
-                "resume_concept_data": resume_concept_data}
+                "resume_concept_data": resume_concept_data,
+                "resume_entity_location_data": resume_entity_location_data}
     if format == 'json':
         return jsonify(**data)
     else:
