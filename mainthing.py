@@ -5,6 +5,7 @@ from werkzeug import secure_filename
 from pdfminer.pdfparser import PDFParser
 import requests
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import ParseError
 
 # Secret Key
 API_KEY = "bae55da9dafaa2c7b9e8d78e678d69c4ce210ddf"
@@ -37,9 +38,8 @@ def parseRankedEntities(xml_str):
 
 
 @app.route("/")
-def hello():
-    
-    return "Hello World!"
+def hello():    
+    return render_template('loadResume.html')
 
 @app.route("/test")
 @app.route("/test/")
@@ -66,9 +66,15 @@ def getEntities(query_type="TextGetRankedNamedEntities"):
     url = "http://access.alchemyapi.com/calls/text/%s?apikey=%s&text=%s" % (query_type, API_KEY, msg)
     try:
         r = requests.get(url)
-        entities = parseRankedEntities(r.text)
-        # entities = ( (1,2,3,4), ('blah',3,6,3), (69,43,23,12) )
-        return render_template('entities.html', original=msg, entities=entities)
+        print "----" 
+        print r.text
+        print "===="
+        try:
+            entities = parseRankedEntities(r.text)
+            # entities = ( (1,2,3,4), ('blah',3,6,3), (69,43,23,12) )
+            return render_template('entities.html', original=msg, entities=entities)
+        except ParseError as e:
+            return r.text
     except requests.exceptions.ConnectionError as e:
         return "Connection Error"
 
