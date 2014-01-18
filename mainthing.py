@@ -246,7 +246,11 @@ def doQuery():
         resume_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
                                  resume_entity_data)
 
-        final_score = score_resume(job_entity_data, job_keyword_data, job_concept_data, resume_entity_data, resume_keyword_data, resume_concept_data, [])
+        try:
+            final_score = score_resume(job_entity_data, job_keyword_data, job_concept_data, resume_entity_data, resume_keyword_data, resume_concept_data, [])
+        except Exception, e:
+            print "Error generating final score", e
+            final_score = -1
 
         data = {"final_score": final_score,
                 "job_entity_data": job_entity_data, 
