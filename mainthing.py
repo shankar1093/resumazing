@@ -128,18 +128,19 @@ def get_concepts(format, msg):
         return None
 
 # Returns json data for a job query ...?url=<THE_URL>
-@app.route("/query/job")
+@app.route("/query/job", methods=['GET','POST'])
 def doJobQuery():
-    format = request.form['format']
-
     # Job Listing URL
-    job_url = request.form['url']
+    if request.method == 'GET':
+        job_url = request.args.get('url')
+    else:
+        job_url = request.form['url']
     if not job_url:
         return "Need url parameter"
     # Get Job Listing URL data
     job_entity_data = get_entities('url', job_url, 0)
     job_keyword_data = get_keywords('url', job_url, 0)
-    job_concept_data = get_concepts('url', job_url, 0)
+    job_concept_data = get_concepts('url', job_url)
 
     # Filter out City, StateOrCounty
     job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
@@ -147,7 +148,8 @@ def doJobQuery():
     job_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
                              job_entity_data)
 
-    data = {"job_entity_data": job_entity_data, 
+    data = {"job_url": job_url,
+            "job_entity_data": job_entity_data, 
             "job_keyword_data": job_keyword_data, 
             "job_concept_data": job_concept_data,
             "job_entity_location_data": job_entity_location_data}
