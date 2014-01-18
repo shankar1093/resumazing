@@ -1,0 +1,14 @@
+<!doctype html>
+<title>Entities</title>
+<h1>Original Message</h1>
+<p>Message: "{{ original }}"</p>
+<h1>Entity list</h1>
+<ul>
+{% for entity in entities %}
+    <li>
+        Text: {{ entity[3] }}<br/>
+        Type: {{ entity[0] }}<br/>
+        Relevance: {{ entity[1] }}, Count: {{ entity[2] }}<br/>
+    </li>
+{% endfor %}
+</ul>
