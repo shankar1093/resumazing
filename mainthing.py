@@ -26,9 +26,6 @@ def getPDFContent(path):
     content = u" ".join(content.replace(u"\xa0", u" ").strip().split())
     return content
 
-# Secret Key
-API_KEY = "bae55da9dafaa2c7b9e8d78e678d69c4ce210ddf"
-
 app = Flask(__name__)
 
 UPLOAD_FOLDER = '/home/sam/files'
@@ -71,37 +68,18 @@ def uploaded_file(filename):
 @app.route("/keyword/<query_type>")
 def getKeywords(query_type="TextGetRankedKeywords"):
     msg = request.args.get('msg')
-    if not msg:
-        return "Need to add ?msg= parameter"
-    url = "http://access.alchemyapi.com/calls/text/%s?apikey=%s&text=%s" % (query_type, API_KEY, msg)
-
-    try:
-        r = requests.get(url)
-        words = get_keywords_from_text(r.text)
-        # words = {'boop':5,'abscd':6,'Alop':29}
-        return render_template('keywords.html', original=msg, words=words)
-    except requests.exceptions.ConnectionError as e:
-        return "Connection Error"
+    words = get_keywords_from_text(msg)
+    return render_template('keywords.html', original=msg, words=words)
     
 @app.route("/entity")
 def getEntities(query_type="TextGetRankedNamedEntities"):
     msg = request.args.get('msg')
-    if not msg:
-        return "Need to provide text in a 'msg' parameter"
-    url = "http://access.alchemyapi.com/calls/text/%s?apikey=%s&text=%s" % (query_type, API_KEY, msg)
-    try:
-        r = requests.get(url)
-        try:
-            entities = get_entities_from_text(r.text)
-            format = request.args.get('format')
-            if format == 'json':
-                return json.dumps(entities)
-            else:
-                return render_template('entities.html', original=msg, entities=entities)
-        except ParseError as e:
-            return r.text
-    except requests.exceptions.ConnectionError as e:
-        return "Connection Error"
+    entities = get_entities_from_text(msg)
+    format = request.args.get('format')
+    if format == 'json':
+        return json.dumps(entities)
+    else:
+        return render_template('entities.html', original=msg, entities=entities)
 
 @app.route("/entityurl")
 def getEntitiesFromURL():
