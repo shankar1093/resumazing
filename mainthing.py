@@ -1,4 +1,6 @@
+import os
 from flask import Flask
+from flask import send_from_directory
 from flask import render_template
 from flask import request, redirect, url_for
 from werkzeug import secure_filename
@@ -12,7 +14,7 @@ API_KEY = "bae55da9dafaa2c7b9e8d78e678d69c4ce210ddf"
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = '/path/to/the/uploads'
+UPLOAD_FOLDER = '/home/sam/files'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -36,10 +38,29 @@ def parseRankedEntities(xml_str):
         entities.append( (_type, relevance, count, text) )
     return entities
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route("/")
-def hello():    
+
+########################################3
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            print "File uploaded successfully"
+            # return redirect(url_for('uploaded_file',
+            #                         filename=filename))
     return render_template('loadResume.html')
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename)
 
 @app.route("/keyword")
 @app.route("/keyword/")
