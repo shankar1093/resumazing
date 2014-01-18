@@ -127,7 +127,52 @@ def get_keywords_from_url(url):
     else:
         print('Error in keyword extraction call: ', response['statusInfo'])
         return None
+		
+def determine_string_match(job_string, applicant_string):
+	ret = 1. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
+	if ret == 0:
+		ret = 0.5 * max([determine_string_match(job_string, sub) for sub in applicant_string.split()])
 
+def determine_job_title_match(job_string, applicant_string):
+	ret = 2. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
+	if ret == 0:
+		ret = 1. * max([determine_string_match(job_string, sub) for sub in applicant_string.split()])
+	if applicant_string.lower().find('intern') >= 0 and job_string.lower().find('intern') < 0:
+		ret /= 2.
+	return ret
+
+def determine_degree_match(job_degrees, applicant_degrees):
+	return 1. #Return 0.0 if no match, 1.0 if match, 1.5 if requirements exceeded
+	
+def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, applicant_keywords, applicant_concepts, clusters):
+	text(x) = x[0]
+	cluster = filter(lambda x : company in x, clusters)
+	#Points for having a relevant degree
+	job_degrees = map(text,filter(lambda x : x[2] == 'ProfessionalDegree', job_entities))
+	applicant_degrees = map(text, filter(lambda x : x[2] == 'ProfessionalDegree', applicant_entities))
+	degree_score = determine_degree_match(job_degrees, applicant_degrees)
+	#Points for having relevant job experience
+	job_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', job_entities))
+	applicant_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', applicant_entities))
+	combinations = [[(x, y) for x in job_job_titles] for y in applicant_job_titles]
+	job_title_score = max([determine_job_title_match(x, y) for (x, y) in combinations])
+	#Points for referencing relevant organizations or companies
+	job_organizations = map(text,filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', job_entities))
+	applicant_organizations = map(text, filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', applicant_entities))
+	combinations = [[(x, y) for x in job_organizations] for y in applicant_organizations]
+	organization_score = 0.5 * max([determine_string_match(x, y) for (x, y) in combinations])	
+	#Points for working for company in same cluster
+	cluster_score = 1.0 if len(set(applicant_organizations) & set(cluster)) > 0 else 0.
+	#Points for using relevant keywords
+	combinations = [[(x, y) for x in map(text, job_keywords)] for y in map(text, applicant_keywords)]
+	keyword_score = max(3., sum([determine_string_match(x, y) for (x, y) in combinations]))
+	#Points for using relevant concepts
+	combinations = [[(x, y) for x in map(text, job_concepts)] for y in map(text, applicant_concepts)]
+	concept_score = max(2., sum([determine_string_match(x, y) for (x, y) in combinations]))
+	final_score = degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept score
+	
+	return final_score
+	
 @app.route("/query", methods=['POST'])
 def doQuery():
     format = request.form['format']
