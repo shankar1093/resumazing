@@ -4,7 +4,6 @@ from flask import send_from_directory
 from flask import render_template
 from flask import request, redirect, url_for
 from werkzeug import secure_filename
-from pdfminer.pdfparser import PDFParser
 import requests
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import ParseError
@@ -49,7 +48,7 @@ def parseRankedEntities(xml_str):
         relevance = entity[1].text
         count = entity[2].text
         text = entity[3].text
-        entities.append( (_type, relevance, count, text) )
+        entities.append( (text, relevance, _type, count) )
     return entities
 
 def allowed_file(filename):
@@ -115,7 +114,16 @@ def getEntities(query_type="TextGetRankedNamedEntities"):
             return r.text
     except requests.exceptions.ConnectionError as e:
         return "Connection Error"
-		
+
+@app.route("/entityurl")
+def getEntitiesFromURL():
+    url = request.args.get('url')
+    if not url:
+        return "Need url parameter"
+    data = get_entities_from_url(url)
+    if not data:
+        return "Error getting url data"
+
 def get_entities_from_url(url):
 	response = alchemyapi.entities('url',url, { 'sentiment':1 })
 	if response['status'] == 'OK':
@@ -125,4 +133,4 @@ def get_entities_from_url(url):
 		return None
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)

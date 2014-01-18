@@ -4,46 +4,66 @@
 <p>Message: "{{ original }}"</p>
 <h1>Entity list</h1>
 
-<h2>Degrees</h2>
+<h2>Persons</h2>
 {% for entity in entities %}
-{% if entity[0] == "Degree" %}
+<ul>
+{% if entity[2] == "Person" %}
     <li>
-        Text: {{ entity[3] }}<br/>
+        Text: <b>{{ entity[0] }}</b><br/>
         Relevance: {{ entity[1] }}<br/>
-        Count: {{ entity[2] }}
+        Count: {{ entity[3] }}
     </li>
 {% endif %}
+</ul>
+{% endfor %}
+
+<h2>Degrees</h2>
+{% for entity in entities %}
+<ul>
+{% if entity[2] == "Degree" %}
+    <li>
+        Text: <b>{{ entity[0] }}</b><br/>
+        Relevance: {{ entity[1] }}<br/>
+        Count: {{ entity[3] }}
+    </li>
+{% endif %}
+</ul>
 {% endfor %}
 
 <h2>Organizations</h2>
 {% for entity in entities %}
-{% if entity[0] == "Organization" %}
+<ul>
+{% if entity[2] == "Organization" %}
     <li>
-        Text: {{ entity[3] }}<br/>
+        Text: <b>{{ entity[0] }}</b><br/>
         Relevance: {{ entity[1] }}<br/>
-        Count: {{ entity[2] }}
+        Count: {{ entity[3] }}
     </li>
 {% endif %}
+</ul>
 {% endfor %}
 
 <h2>Companies</h2>
 {% for entity in entities %}
-{% if entity[0] == "Company" %}
+<ul>
+{% if entity[2] == "Company" %}
     <li>
-        Text: {{ entity[3] }}<br/>
+        Text: <b>{{ entity[0] }}</b><br/>
         Relevance: {{ entity[1] }}<br/>
-        Count: {{ entity[2] }}
+        Count: {{ entity[3] }}
     </li>
 {% endif %}
+</ul>
 {% endfor %}
 
 <h2>All</h2>
 <ul>
 {% for entity in entities %}
     <li>
-        Text: {{ entity[3] }}<br/>
-        Type: {{ entity[0] }}<br/>
-        Relevance: {{ entity[1] }}, Count: {{ entity[2] }}
+        Text: <b>{{ entity[0] }}</b><br/>
+        Type: {{ entity[2] }}<br/>
+        Relevance: {{ entity[1] }}<br/>
+        Count: {{ entity[3] }}
     </li>
 {% endfor %}
 
