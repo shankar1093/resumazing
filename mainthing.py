@@ -97,29 +97,62 @@ def getEntitiesFromURL():
 
 # format = 'url' or 'text'
 # msg = 'the url' or 'the text data'
-def get_entities(format, msg):
-    response = alchemyapi.entities(format, msg, { 'sentiment':1 })
+def get_entities(format, msg, sentiment=1):
+    response = alchemyapi.entities(format, msg, { 'sentiment':sentiment })
     if response['status'] == 'OK':
-        return [(e['text'], e['relevance'], e['type'], e['count'], e['sentiment']['type'], e['sentiment'].get('score') or 0) for e in response['entities']]   
+        if sentiment == 1:
+            return [(e['text'], e['relevance'], e['type'], e['count'], e['sentiment']['type'], e['sentiment'].get('score') or 0) for e in response['entities']]   
+        else:
+            return [(e['text'], e['relevance'], e['type'], e['count']) for e in response['entities']]   
     else:
         print('Error in entity extraction call: ', response['statusInfo'])
         return None
 
-def get_keywords(format, msg):
-    response = alchemyapi.keywords(format, msg, { 'sentiment':1 })
+def get_keywords(format, msg, sentiment=1):
+    response = alchemyapi.keywords(format, msg, { 'sentiment':sentiment })
     if response['status'] == 'OK':
-        return [(e['text'], e['relevance'], e['sentiment']['type'], e['sentiment'].get('score') or 0) for e in response['keywords']]
+        if sentiment == 1:
+            return [(e['text'], e['relevance'], e['sentiment']['type'], e['sentiment'].get('score') or 0) for e in response['keywords']]
+        else:
+            return [(e['text'], e['relevance']) for e in response['keywords']]
     else:
         print('Error in keyword extraction call: ', response['statusInfo'])
         return None
 
 def get_concepts(format, msg):
-    response = alchemyapi.concepts(format, msg, { 'sentiment':1 })
+    response = alchemyapi.concepts(format, msg)
     if response['status'] == 'OK':
         return [(e['text'], e['relevance']) for e in response['concepts']]
     else:
         print('Error in concept extraction call: ', response['statusInfo'])
         return None
+
+# Returns json data for a job query ...?url=<THE_URL>
+@app.route("/query/job")
+def doJobQuery():
+    format = request.form['format']
+
+    # Job Listing URL
+    job_url = request.form['url']
+    if not job_url:
+        return "Need url parameter"
+    # Get Job Listing URL data
+    job_entity_data = get_entities('url', job_url, 0)
+    job_keyword_data = get_keywords('url', job_url, 0)
+    job_concept_data = get_concepts('url', job_url, 0)
+
+    # Filter out City, StateOrCounty
+    job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
+                                      job_entity_data)
+    job_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
+                             job_entity_data)
+
+    data = {"job_entity_data": job_entity_data, 
+            "job_keyword_data": job_keyword_data, 
+            "job_concept_data": job_concept_data,
+            "job_entity_location_data": job_entity_location_data}
+    
+    return jsonify(**data)
 
 @app.route("/query", methods=['POST'])
 def doQuery():
