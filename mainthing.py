@@ -138,7 +138,7 @@ def determine_string_match(job_string, applicant_string):
 
     job_words = job_string.split()
     applicant_words = applicant_string.split()
-    n = max(len(job_words), len(applicant_words)) # max # of wors
+    n = min(len(job_words), len(applicant_words)) # min # of wors
     c = 0
     for word in job_words:
         if word in applicant_words:
@@ -211,8 +211,10 @@ def determine_degree_match(job_degrees, applicant_degrees):
         return 0.0
 
     # return 1. #Return 0.0 if no match, 1.0 if match, 1.5 if requirements exceeded
+	
+clusters = [['NSA'],['Coca-Cola'],['Experis'],['IBM', 'Comcast', 'KForce', 'Amazon', 'Verizon', 'Apple'],['Goldman Sachs', 'Wells-Fargo', 'Bloomberg', 'Chase'], ['Macys', 'Aflac', 'Home Depot', 'UPS', 'Walmart', 'ABM', 'DLC', 'United Technologies Corporation', 'McKesson', 'Staples', 'United Health Group', 'Dupont', 'McDonalds', 'Best Buy', 'Piper Morgan'], ['Northrop Grumman', 'Lockheed Martin']]
     
-def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, applicant_keywords, applicant_concepts, clusters):    
+def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, applicant_keywords, applicant_concepts):    
     text = lambda x: x[0]
     denominator = 10.
     print "DATA:"
@@ -259,8 +261,11 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
         denominator -= 0.5
     
     #Points for working for company in same cluster
-    if len(clusters) > 0: 
-        cluster = filter(lambda x : company in x, clusters)
+	possible_companies = map(text, filter(lambda x : x[2] == 'Company', applicant_entities))
+	cluster = []
+	if len(possible_companies) > 0:
+        cluster = filter(lambda x : possible_companies[0] in x, clusters)
+	if len(cluster) > 0
         cluster_score = 1.0 if len(set(applicant_organizations) & set(cluster)) > 0 else 0.
     else:
         cluster_score = 0.
@@ -269,7 +274,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
     #Points for using relevant keywords
     if job_keywords and len(job_keywords) > 0 and applicant_keywords and len(applicant_keywords) > 0:
         combinations = [[(x, y) for x in map(text, job_keywords)] for y in map(text, applicant_keywords)]
-        keyword_score = max(3., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
+        keyword_score = min(3., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
     else:
         keyword_score = 0.
         denominator -= 3.
@@ -277,7 +282,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
     #Points for using relevant concepts
     if job_concepts and len(job_concepts) > 0 and applicant_concepts and len(applicant_concepts) > 0:
         combinations = [[(x, y) for x in map(text, job_concepts)] for y in map(text, applicant_concepts)]
-        concept_score = max(2., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
+        concept_score = min(2., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
     else:
         concept_score = 0.
         denominator -= 2.
@@ -285,7 +290,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
     if denominator == 0:
         # No data was given.
         return None
-    final_score = (degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score) / denominator
+    final_score = 10. * (degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score) / denominator
     
     return final_score
 
@@ -358,7 +363,7 @@ def doQuery():
             resume_entity_location_data = None
 
         # try:
-        final_score = score_resume(job_entity_data, job_keyword_data, job_concept_data, resume_entity_data, resume_keyword_data, resume_concept_data, [])
+        final_score = score_resume(job_entity_data, job_keyword_data, job_concept_data, resume_entity_data, resume_keyword_data, resume_concept_data)
         # except Exception, e:
         #     print "Error generating final score", e
         #     final_score = -1
