@@ -14,6 +14,8 @@ import sys
 import pyPdf
 import json
 
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 from matplotlib import rcParams
@@ -42,7 +44,7 @@ def getPDFContent(path):
 app = Flask(__name__)
 
 UPLOAD_FOLDER = '/home/sam/files'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf'])
+ALLOWED_EXTENSIONS = set(['pdf'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
@@ -303,7 +305,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
     final_score = 10. * (degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score) / denominator
     
     return final_score
-	
+    
 def remove_border(axes=None, top=False, right=False, left=True, bottom=True):
     """
     Minimize chartjunk by stripping out unnecessary plot borders and axis ticks
@@ -331,25 +333,25 @@ def remove_border(axes=None, top=False, right=False, left=True, bottom=True):
         ax.yaxis.tick_right()
 
 def draw_spectrum(scores):
-	bins = range(1,8)
-	fig = plt.figure()
-	ax = plt.gca()
-	ax.bar(range(7), scores, color=['b','y','aqua','m','g','indigo','r'])
-	remove_border()
-	ax.set_ylim([0,10])
-	ax.set_xlabel('Group of Companies')
-	ax.set_ylabel('Compatibility with Group')
-	ax.set_title('Your Personal Spectrum of Performance')
-	plt.show()
-	savefig('/home/sam/spectrum.png')
-	
+    bins = range(1,8)
+    fig = plt.figure()
+    ax = plt.gca()
+    ax.bar(range(7), scores, color=['b','y','aqua','m','g','indigo','r'])
+    remove_border()
+    ax.set_ylim([0,10])
+    ax.set_xlabel('Group of Companies')
+    ax.set_ylabel('Compatibility with Group')
+    ax.set_title('Your Personal Spectrum of Performance')
+    # plt.show()
+    fig.savefig(UPLOAD_FOLDER + '/spectrum.png')
+    
 def generate_group_scores(applicant_entities, applicant_keywords, applicant_concepts):
-	f = file['data.json']
-	json_data=open(file)
-	data = json.load(json_data)
-	scores = [score_resume(data[str(i)]['entities'], data[str(i)]['keywords'], data[str(i)]['concepts'], applicant_entities, applicant_keywords, applicant_concepts) for i in range(len(data))]
-	draw_spectrum(scores)
-	return scores
+    with open('spectrum_data.json', 'r') as f:
+       json_data=f.read()
+    data = json.loads(json_data)
+    scores = [score_resume(data[str(i)]['entities'], data[str(i)]['keywords'], data[str(i)]['concepts'], applicant_entities, applicant_keywords, applicant_concepts) for i in range(len(data))]
+    draw_spectrum(scores)
+    return scores
 
 @app.route("/query", methods=['POST'])
 def doQuery():
@@ -423,14 +425,20 @@ def doQuery():
         # except Exception, e:
         #     print "Error generating final score", e
         #     final_score = -1
+
+        # Generate Spectrum PNG
+        spectrum_scores = generate_group_scores(resume_entity_data, resume_keyword_data, resume_concept_data)
+
     else:
         final_score = -1
         resume_entity_data = None
         resume_entity_location_data = None
         resume_keyword_data = None
         resume_concept_data = None
+        spectrum_scores = None
     
     data = {"final_score": final_score,
+            "spectrum_scores":spectrum_scores,
             "job_entity_data": job_entity_data, 
             "job_keyword_data": job_keyword_data, 
             "job_concept_data": job_concept_data,
