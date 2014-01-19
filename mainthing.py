@@ -143,7 +143,7 @@ def determine_string_match(job_string, applicant_string):
     for word in job_words:
         if word in applicant_words:
             c += 1
-    return float(c)/n # ratio of words found to not found
+    return 0.5 * float(c)/n # ratio of words found to not found
 
 def determine_job_title_match(job_string, applicant_string):
     ret = 2. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
