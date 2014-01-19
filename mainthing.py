@@ -155,10 +155,13 @@ def doJobQuery():
     job_concept_data = get_concepts('url', job_url)
 
     # Filter out City, StateOrCounty
-    job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
-                                      job_entity_data)
-    job_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
-                             job_entity_data)
+    if job_entity_data:
+        job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
+                                          job_entity_data)
+        job_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
+                                 job_entity_data)
+    else:
+        job_entity_location_data = None
 
     data = {"job_url": job_url,
             "job_entity_data": job_entity_data, 
