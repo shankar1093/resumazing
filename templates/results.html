@@ -1,8 +1,9 @@
 <!doctype html>
 <html>
 <head>
-    <title>Results</title>
+    <title>Resumazing: Results</title>
     <meta charset="utf-8">
+    <!--<script type="text/javascript">document.domain = "resumazing.net/"</script>-->
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="{{ url_for('static', filename='d3.layout.cloud.js') }}"></script>
     <script src="{{ url_for('static', filename='colorbrewer.js') }}"></script>
@@ -16,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='js/fancybox/jquery.fancybox.css') }}"/>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" media="screen" />
     <link rel="stylesheet" media="screen and (max-height: 770px)" href="{{ url_for('static', filename='css/tablet.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}"/>
     <style>
     
     text {
@@ -34,9 +36,8 @@
     </style>
 </head>
 <body>
-<h1>Resumazing</h1>
-<p>Final Score: {{ data.final_score }}</p>
-
+<div id="s_results_title">Resumazing</div>
+<div id="subtitle">Leveraging data to make you stand out.</div>
 <script>
 
  var fill = d3.scale.ordinal()
@@ -59,7 +60,26 @@
 
   var test;
   function draw(words) {
-    d3.select("body").append("svg")
+    d3.select("#resume_graph").append("svg")
+        .attr("width", 300)
+        .attr("height", 300)
+      .append("g")
+        .attr("transform", "translate(150,150)")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return d.size + "px"; })
+        .style("font-family", "Impact")
+        .style("fill", function(d, i) { return fill(i); })
+
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; });
+  }
+  function draw2(words) {
+    d3.select("#job_graph").append("svg")
         .attr("width", 300)
         .attr("height", 300)
       .append("g")
@@ -79,8 +99,9 @@
   }
 </script>
 
-<h2>Your Word Graph</h2>
-<h5>Green - Wanted by job listing</h5>
+<hr>
+<div id="section_title">Here’s what we think your potential employer is looking for.</div>
+<div id="job_graph" class="wordgraph"></div>
 
 <script>
   d3.layout.cloud().size([300, 300])
@@ -99,14 +120,16 @@
       .rotate(function() { return ~~(Math.random() * 2) * 87; })
       .font("Impact")
       .fontSize(function(d) { return d.size; })
-      .on("end", draw)
+      .on("end", draw2)
       .start();
 </script>
+<div id="section_subtitle">Based on all the data we’ve gathered, it looks like these are the ten most important things they want to see. The
+larger the phrase is, the more relevant. Green phrases are ones we think you’re already hitting on pretty well.
+The red ones are what we think you could use some work on.</div>
 
-
-<h2>Job Word Graph</h2>
-<h5>Green - Satisfied by your resume.</h5>
-
+<hr>
+<div id="section_title">Here’s what we’ve gathered about you.</div>
+<div id="resume_graph" class="wordgraph"></div>
 <script>
     d3.layout.cloud().size([300, 300])
   
@@ -128,7 +151,15 @@
       .on("end", draw)
       .start();
 </script>
+<div id="section_subtitle">Looking at your resume, these are the ten phrases that stood out the most to us. Again, the bigger the phrase,
+the more it stood out. The words in green are the ones we think your potential employer will be most excited
+about. We think they might care about the red ones a litte less.</div>
 
+<hr>
+<div id="section_title">Based on these results, we think there’s roughly a {{ data.final_score }}/10.00
+chance that you’ll pass their automated resume screening.</div>
+
+<hr>
 <h2>Cluster Graph</h2>
 <div class="sigma-all">
     <div class="sigma-parent">
@@ -198,7 +229,10 @@
         </div>
     </div>
 </div>
-<h2>Output from Alchemy Natural Language Processing</h2>
+
+<hr>
+<h5>Here's some of the backend data if you're interested.</h5>
+<details>
 <table>
     <tr>
         <th>Type</th>
@@ -293,59 +327,7 @@
         </td>
     </tr>
 </table>
-
-<script type="text/javascript">
-
-var diameter = 960,
-    format= d3.format(",d"),
-    color = d3.scale.category20c();
-
-var bubble = d3.layout.pack()
-    .sort(null)
-    .size([diameter, diameter])
-    .padding(1.5);
-
-var svg = d3.select("body").append("svg")
-    .attr("width", diameter)
-    .attr("height", diameter)
-    .attr("class", "bubble");
-
-
-
-var node = svg.selectAll(".node")
-  .data(bubble.nodes(classdata(data.resume_entity_data))
-  .filter(function(d) { return !d.children; }))
-.enter().append("g")
-  .attr("class", "node")
-  .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-node.append("title")
-  .text(function(d) { return d.className + ": " + format(d.value); });
-
-node.append("circle")
-  .attr("r", function(d) { return d.r; })
-  .style("fill", function(d) { return color(d.packageName); });
-
-node.append("text")
-  .attr("dy", ".3em")
-  .style("text-anchor", "middle")
-  .text(function(d) { return d.className.substring(0, d.r / 3); });
-
-function classdata(d) {
-    var classes = [];
-    for (var i = d.length - 1; i >= 0; i--) {
-           classes.push({packageName:d[i][2], 
-                         className: d[i][0], 
-                         value: Math.floor(Math.pow(d[i][1]*100-50, 2))
-                        });
-       };
-    return {children: classes};
-}
-
-d3.select(self.frameElement).style("height", diameter + "px");
-
-
-</script>
+</details>
 
 </body>
 </html>
