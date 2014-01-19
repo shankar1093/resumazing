@@ -192,7 +192,7 @@ def determine_degree_match(job_degrees, applicant_degrees):
     
     if actual_degree_type > min_degree_req:
         return 1.5
-    elif actual_degree_type == min_degree_req
+    elif actual_degree_type == min_degree_req:
         return 1
     else:
         return 0.0
