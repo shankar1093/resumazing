@@ -1,0 +1,53 @@
+{
+  "type": "network",
+  "version": "1.0",
+  "data": "static/data.json",
+  "logo": {
+    "text": "Resumazing",
+    "file": "",
+    "link": ""
+  },
+  "text": {
+    "title": "Similarities in Job-Listings Between Companies",
+    "more": "A company is evaluated by looking at the words present across many of its job listings. The semantic relevance of these words is aggregated, and these aggregates are compared to determine similarity. K-means clustering is performed to form the groups.",
+    "intro": "This graph shows dots corresponding to companies. They are grouped by their tedency to have similar keywords in their job listings. Companies in a group are closer to one another and share a color. If you are qualified to work for one company in a group you are likely to be qualified to work for the others as well."
+  },
+  "legend": {
+    "edgeLabel": "",
+    "colorLabel": "Clusters",
+    "nodeLabel": "Companies"
+  },
+  "features": {
+    "search": true,
+    "groupSelectorAttribute": "color",
+    "hoverBehavior": "dim"
+  },
+  "informationPanel": {
+    "imageAttribute": false,
+    "groupByEdgeDirection": false
+  },
+  "sigma": {
+    "graphProperties": {
+      "minEdgeSize": 0.2,
+      "maxNodeSize": 7,
+      "maxEdgeSize": 0.5,
+      "minNodeSize": 1
+    },
+    "drawingProperties": {
+      "labelThreshold": 10,
+      "hoverFontStyle": "bold",
+      "defaultEdgeType": "curve",
+      "defaultLabelColor": "#000",
+      "defaultLabelHoverColor": "#fff",
+      "defaultLabelSize": 14,
+      "activeFontStyle": "bold",
+      "fontStyle": "bold",
+      "defaultHoverLabelBGColor": "#002147",
+      "defaultLabelBGColor": "#ddd"
+    },
+    "mouseProperties": {
+      "minRatio": 0.75,
+      "maxRatio": 20
+    }
+  }
+}

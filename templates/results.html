@@ -6,6 +6,16 @@
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="{{ url_for('static', filename='d3.layout.cloud.js') }}"></script>
     <script src="{{ url_for('static', filename='colorbrewer.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/jquery/jquery.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/sigma/sigma.min.js') }}" type="text/javascript" language="javascript"></script>
+    <script src="{{ url_for('static', filename='js/sigma/sigma.parseJson.js') }}" type="text/javascript" language="javascript"></script>
+    <script src="{{ url_for('static', filename='js/fancybox/jquery.fancybox.pack.js') }}" type="text/javascript" language="javascript"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" language="javascript"></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='js/fancybox/jquery.fancybox.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" media="screen" />
+    <link rel="stylesheet" media="screen and (max-height: 770px)" href="{{ url_for('static', filename='css/tablet.css') }}" />
     <style>
     
     text {
@@ -24,6 +34,73 @@
     </style>
 </head>
 <body>
+<div class="sigma-parent">
+    <div class="sigma-expand" id="sigma-canvas"></div>
+  </div>
+<div id="mainpanel">
+  <div class="col">
+        <div id="maintitle"></div>
+    <div id="title"></div>
+    <div id="titletext"></div>
+    <div class="info cf">
+      <dl>
+        <dt class="moreinformation"></dt>
+        <dd class="line"><a href="#information" class="line fb">More about this visualisation</a></dd>
+      </dl>
+    </div>
+<div id="legend">
+    <div class="box">
+        <h2>Legend:</h2>
+        <dl>
+        <dt class="node"></dt>
+        <dd></dd>
+        <dt class="edge"></dt>
+        <dd></dd>
+        <dt class="colours"></dt>
+        <dd></dd>       
+        </dl>
+    </div>
+</div> 
+    <div class="b1">
+    <form>
+      <div id="search" class="cf"><h2>Search:</h2>
+        <input type="text" name="search" value="Search by name" class="empty"/><div class="state"></div>
+        <div class="results"></div>
+      </div>
+      <div class="cf" id="attributeselect"><h2>Group Selector:</h2>
+        <div class="select">Select Group</div>
+    <div class="list cf"></div>
+      </div>
+    </form>
+    </div>
+  </div>
+  <div id="information">
+  </div>
+</div>
+    <div id="zoom">
+        <div class="z" rel="in"></div> <div class="z" rel="out"></div> <div class="z" rel="center"></div>
+    </div>
+    <div id="copyright">
+        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="{{ url_for('static',filename='images/CC.png') }}" /></a></div>
+    </div>
+<div id="attributepane">
+<div class="text">
+    <div title="Close" class="left-close returntext"><div class="c cf"><span>Return to the full network</span></div></div>  
+<div class="headertext">
+    <span>Information Pane</span>
+</div>  
+  <div class="nodeattributes">
+    <div class="name"></div>
+    <div class="data"></div>
+    <div class="p">Connections:</div>
+    <div class="link">
+      <ul>
+      </ul>
+    </div>
+  </div>
+    </div>
+</div>
+
 <h1>Results</h1>
 <p>Final Score: {{ data.final_score }}</p>
 
@@ -120,8 +197,6 @@
 </script>
 
 <h2>Cluster Graph</h2>
-
-<h2>Spectrograph</h2>
 
 <h2>Output from Alchemy Natural Language Processing</h2>
 <table>

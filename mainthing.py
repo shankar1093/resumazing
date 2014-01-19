@@ -211,7 +211,7 @@ def determine_degree_match(job_degrees, applicant_degrees):
         return 0.0
 
     # return 1. #Return 0.0 if no match, 1.0 if match, 1.5 if requirements exceeded
-	
+    
 clusters = [['NSA'],['Coca-Cola'],['Experis'],['IBM', 'Comcast', 'KForce', 'Amazon', 'Verizon', 'Apple'],['Goldman Sachs', 'Wells-Fargo', 'Bloomberg', 'Chase'], ['Macys', 'Aflac', 'Home Depot', 'UPS', 'Walmart', 'ABM', 'DLC', 'United Technologies Corporation', 'McKesson', 'Staples', 'United Health Group', 'Dupont', 'McDonalds', 'Best Buy', 'Piper Morgan'], ['Northrop Grumman', 'Lockheed Martin']]
     
 def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, applicant_keywords, applicant_concepts):    
@@ -261,11 +261,11 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
         denominator -= 0.5
     
     #Points for working for company in same cluster
-	possible_companies = map(text, filter(lambda x : x[2] == 'Company', applicant_entities))
-	cluster = []
-	if len(possible_companies) > 0:
+    possible_companies = map(text, filter(lambda x : x[2] == 'Company', applicant_entities))
+    cluster = []
+    if len(possible_companies) > 0:
         cluster = filter(lambda x : possible_companies[0] in x, clusters)
-	if len(cluster) > 0
+    if len(cluster) > 0:
         cluster_score = 1.0 if len(set(applicant_organizations) & set(cluster)) > 0 else 0.
     else:
         cluster_score = 0.
