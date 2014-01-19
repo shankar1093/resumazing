@@ -189,22 +189,22 @@ def determine_degree_match(job_degrees, applicant_degrees):
     for entity in job_degrees:
         degree = entity[0].strip()
         if degree.startswith('B') or "Bachelor" in degree:
-            min_degree_req = 1
+            min_degree_req = max(1, min_degree_req)
         if degree.startswith('M') or "Master" in degree:
-            min_degree_req = 2
+            min_degree_req = max(2, min_degree_req)
 
     actual_degree_type = 0
     for entity in applicant_degrees:
         degree = entity[0].strip()
         if degree.startswith('B') or "Bachelor" in degree:
-            actual_degree_type = 1
+            actual_degree_type = max(1, actual_degree_type)
         if degree.startswith('M') or "Master" in degree:
-            actual_degree_type = 2
+            actual_degree_type = max(2, actual_degree_type)
     
     if actual_degree_type > min_degree_req:
         return 1.5
     elif actual_degree_type == min_degree_req:
-        return 1
+        return 1.0
     else:
         return 0.0
 
