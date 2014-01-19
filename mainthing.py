@@ -128,9 +128,20 @@ def get_concepts(format, msg):
         return None
         
 def determine_string_match(job_string, applicant_string):
-    ret = 1. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
-    if ret == 0:
-        ret = 0.5 * max([determine_string_match(job_string, sub) for sub in applicant_string.split()])
+    job_string = job_string.strip().lower()
+    applicant_string = applicant_string.strip().lower()
+    if job_string in applicant_string or applicant_string in job_string:
+        return 1.0
+    # If there's a good fit for either, then we're done
+
+    job_words = job_string.split()
+    applicant_words = applicant_string.split()
+    n = max(len(job_words), len(applicant_words)) # max # of wors
+    c = 0
+    for word in job_words:
+        if word in applicant_words:
+            c += 1
+    return float(c)/n # ratio of words found to not found
 
 def determine_job_title_match(job_string, applicant_string):
     ret = 2. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
