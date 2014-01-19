@@ -4,6 +4,8 @@
     <title>Results</title>
     <meta charset="utf-8">
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="{{ url_for('static', filename='d3.layout.cloud.js') }}"></script>
+    <script src="{{ url_for('static', filename='colorbrewer.js') }}"></script>
     <style>
     
     text {
@@ -25,11 +27,97 @@
 <h1>Results</h1>
 <p>Final Score: {{ data.final_score }}</p>
 
+<script>
+
+ var fill = d3.scale.ordinal()
+            .range(["red","green"])
+            .domain([0,1]);
+
+  var data = {{ data|tojson|safe }};
+
+  var job = {"job_entity_data": data.job_entity_data,
+             "job_keyword_data": data.job_keyword_data,
+             "job_concept_data": data.job_concept_data};
+
+  var resume = {"resume_entity_data": data.resume_entity_data,
+                "resume_keyword_data": data.resume_keyword_data,
+                "resume_concept_data": data.resume_concept_data};
+
+  var resume_cloud = [].concat.apply([], d3.values(resume));//resume data
+
+  var job_cloud = [].concat.apply([], d3.values(job)); //job description data
+
+  var test;
+  function draw(words) {
+    d3.select("body").append("svg")
+        .attr("width", 300)
+        .attr("height", 300)
+      .append("g")
+        .attr("transform", "translate(150,150)")
+      .selectAll("text")
+        .data(words)
+      .enter().append("text")
+        .style("font-size", function(d) { return d.size + "px"; })
+        .style("font-family", "Impact")
+        .style("fill", function(d, i) { return fill(i); })
+
+        .attr("text-anchor", "middle")
+        .attr("transform", function(d) {
+          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+        })
+        .text(function(d) { return d.text; });
+  }
+</script>
+
 <h2>Your Word Graph</h2>
 <h5>Green - Wanted by job listing</h5>
 
+<script>
+  d3.layout.cloud().size([300, 300])
+  
+      .words(resume_cloud.map(function(d) {
+          if(d[1]==0.6482){
+            d[1] = 1;
+          }
+          else{
+            d[1]=0.2;
+          }
+
+        return {text: d[0], size:d[1]*40};
+      }))
+      .padding(5)
+      .rotate(function() { return ~~(Math.random() * 2) * 87; })
+      .font("Impact")
+      .fontSize(function(d) { return d.size; })
+      .on("end", draw)
+      .start();
+</script>
+
+
 <h2>Job Word Graph</h2>
 <h5>Green - Satisfied by your resume.</h5>
+
+<script>
+    d3.layout.cloud().size([300, 300])
+  
+      .words(job_cloud.map(function(d) {
+          if(d[1]>0.4){
+            test = 1;
+          }
+          else{
+            test=0;
+          }
+
+
+        return {text: d[0], size:d[1]*41};
+      }))
+      .padding(5)
+      .rotate(function() { return ~~(Math.random() * 2) * 87; })
+      .font("Impact")
+      .fontSize(function(d) { return d.size; })
+      .on("end", draw)
+      .start();
+</script>
 
 <h2>Cluster Graph</h2>
 
@@ -132,8 +220,6 @@
 </table>
 
 <script type="text/javascript">
-var data = {{ data|tojson|safe }};
-// console.log(data);
 
 var diameter = 960,
     format= d3.format(",d"),
