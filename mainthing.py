@@ -126,19 +126,19 @@ def get_concepts(format, msg):
     else:
         print('Error in concept extraction call: ', response['statusInfo'])
         return None
-		
+        
 def determine_string_match(job_string, applicant_string):
-	ret = 1. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
-	if ret == 0:
-		ret = 0.5 * max([determine_string_match(job_string, sub) for sub in applicant_string.split()])
+    ret = 1. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
+    if ret == 0:
+        ret = 0.5 * max([determine_string_match(job_string, sub) for sub in applicant_string.split()])
 
 def determine_job_title_match(job_string, applicant_string):
-	ret = 2. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
-	if ret == 0:
-		ret = 1. * max([determine_string_match(job_string, sub) for sub in applicant_string.split()])
-	if applicant_string.lower().find('intern') >= 0 and job_string.lower().find('intern') < 0:
-		ret /= 2.
-	return ret
+    ret = 2. if applicant_string.lower().find(job_string.lower()) >= 0 else 0.
+    if ret == 0:
+        ret = 1. * max([determine_string_match(job_string, sub) for sub in applicant_string.split()])
+    if applicant_string.lower().find('intern') >= 0 and job_string.lower().find('intern') < 0:
+        ret /= 2.
+    return ret
 # Returns json data for a job query ...?url=<THE_URL>
 @app.route("/query/job", methods=['GET','POST'])
 def doJobQuery():
@@ -171,38 +171,83 @@ def doJobQuery():
     
     return jsonify(**data)
 
+# Entity [ name, relevance, type, count, sentiment value, sentiment type?]
 # Input: a list of all entity objects whose type is Degree for both inputs
 def determine_degree_match(job_degrees, applicant_degrees):
-	return 1. #Return 0.0 if no match, 1.0 if match, 1.5 if requirements exceeded
-	
+    min_degree_req = 0
+    for entity in job_degrees:
+        degree = entity[0].strip()
+        if degree.startswith('B') or "Bachelor" in degree:
+            min_degree_req = 1
+        if degree.startswith('M') or "Master" in degree:
+            min_degree_req = 2
+
+    actual_degree_type = 0
+    for entity in applicant_degrees:
+        degree = entity[0].strip()
+        if degree.startswith('B') or "Bachelor" in degree:
+            actual_degree_type = 1
+        if degree.startswith('M') or "Master" in degree:
+            actual_degree_type = 2
+    
+    if actual_degree_type > min_degree_req:
+        return 1.5
+    elif actual_degree_type == min_degree_req
+        return 1
+    else:
+        return 0.0
+
+    # return 1. #Return 0.0 if no match, 1.0 if match, 1.5 if requirements exceeded
+    
 def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, applicant_keywords, applicant_concepts, clusters):
-	text = lambda x: x[0]
-	cluster = filter(lambda x : company in x, clusters)
-	#Points for having a relevant degree
-	job_degrees = map(text,filter(lambda x : x[2] == 'ProfessionalDegree', job_entities))
-	applicant_degrees = map(text, filter(lambda x : x[2] == 'ProfessionalDegree', applicant_entities))
-	degree_score = determine_degree_match(job_degrees, applicant_degrees)
-	#Points for having relevant job experience
-	job_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', job_entities))
-	applicant_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', applicant_entities))
-	combinations = [[(x, y) for x in job_job_titles] for y in applicant_job_titles]
-	job_title_score = max([determine_job_title_match(x, y) for (x, y) in combinations])
-	#Points for referencing relevant organizations or companies
-	job_organizations = map(text,filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', job_entities))
-	applicant_organizations = map(text, filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', applicant_entities))
-	combinations = [[(x, y) for x in job_organizations] for y in applicant_organizations]
-	organization_score = 0.5 * max([determine_string_match(x, y) for (x, y) in combinations])	
-	#Points for working for company in same cluster
-	cluster_score = 1.0 if len(set(applicant_organizations) & set(cluster)) > 0 else 0.
-	#Points for using relevant keywords
-	combinations = [[(x, y) for x in map(text, job_keywords)] for y in map(text, applicant_keywords)]
-	keyword_score = max(3., sum([determine_string_match(x, y) for (x, y) in combinations]))
-	#Points for using relevant concepts
-	combinations = [[(x, y) for x in map(text, job_concepts)] for y in map(text, applicant_concepts)]
-	concept_score = max(2., sum([determine_string_match(x, y) for (x, y) in combinations]))
-	final_score = degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score
-	
-	return final_score
+    text = lambda x: x[0]
+    cluster = filter(lambda x : company in x, clusters)
+    if job_entities and applicant_entities:
+        #Points for having a relevant professional degree
+        job_degrees = map(text,filter(lambda x : x[2] in ['Degree','ProfessionalDegree'], job_entities))
+        applicant_degrees = map(text, filter(lambda x : x[2] in ['Degree','ProfessionalDegree'], applicant_entities))
+        degree_score = determine_degree_match(job_degrees, applicant_degrees)
+        
+        #Points for having relevant job experience
+        job_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', job_entities))
+        applicant_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', applicant_entities))
+        combinations = [[(x, y) for x in job_job_titles] for y in applicant_job_titles]
+        job_title_score = max([determine_job_title_match(x, y) for (x, y) in combinations])
+        
+        #Points for referencing relevant organizations or companies
+        job_organizations = map(text,filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', job_entities))
+        applicant_organizations = map(text, filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', applicant_entities))
+        
+        if job_organizations and applicant_organizations:
+            combinations = [[(x, y) for x in job_organizations] for y in applicant_organizations]
+            organization_score = 0.5 * max([determine_string_match(x, y) for (x, y) in combinations])
+        else:
+            organization_score = 0
+
+        #Points for working for company in same cluster
+        cluster_score = 1.0 if len(set(applicant_organizations) & set(cluster)) > 0 else 0.
+    else: # elif job_entities and not applicant_entities:
+        print "Missing applicant or job entity data! Skipping scoring based on entity information..."
+        degree_score = 0
+        job_title_score = 0
+        ofrganization_score = 0
+        cluster_score = 0
+    
+    #Points for using relevant keywords
+    if applicant_keywords:
+        combinations = [[(x, y) for x in map(text, job_keywords)] for y in map(text, applicant_keywords)]
+        keyword_score = max(3., sum([determine_string_match(x, y) for (x, y) in combinations]))
+    else:
+        keyword_score = 0
+    #Points for using relevant concepts
+    if applicant_concepts:
+        combinations = [[(x, y) for x in map(text, job_concepts)] for y in map(text, applicant_concepts)]
+        concept_score = max(2., sum([determine_string_match(x, y) for (x, y) in combinations]))
+    else:
+        concept_score = 0
+    final_score = degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score
+    
+    return final_score
 
 
 @app.route("/query", methods=['POST'])
