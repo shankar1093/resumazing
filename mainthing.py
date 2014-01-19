@@ -207,11 +207,13 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
 
 @app.route("/query", methods=['POST'])
 def doQuery():
-    format = request.form['format']
+    # format = request.form['format']
 
     url_or_text = request.form['url_or_text']
     if not url_or_text:
         return "Need url or text parameter"
+
+    # print url_or_text
 
     if url_or_text.startswith('http://'):
         # Job Listing URL
@@ -221,17 +223,23 @@ def doQuery():
         job_keyword_data = get_keywords('url', job_url)
         job_concept_data = get_concepts('url', job_url)
     else:
-        job_text = url_or_text
+        try:
+            job_text = url_or_text.encode('utf-8')
+        except:
+            job_text = url_or_text
         # Get Job Listing URL data
         job_entity_data = get_entities('text', job_text)
         job_keyword_data = get_keywords('text', job_text)
         job_concept_data = get_concepts('text', job_text)
 
     # Filter out City, StateOrCounty
-    job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
-                                      job_entity_data)
-    job_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
-                             job_entity_data)
+    if job_entity_data:
+        job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
+                                          job_entity_data)
+        job_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
+                                 job_entity_data)
+    else:
+        job_entity_location_data = None
 
     # Resume PDF file
     resume_entity_data = ""
@@ -252,10 +260,13 @@ def doQuery():
         resume_concept_data = get_concepts('text', resume_text)
 
         # Filter out City, StateOrCounty
-        resume_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
-                                             resume_entity_data)
-        resume_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
-                                 resume_entity_data)
+        if resume_entity_data:
+            resume_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
+                                                 resume_entity_data)
+            resume_entity_data = filter(lambda x: x[2] not in ["City", "StateOrCounty"],
+                                     resume_entity_data)
+        else:
+            resume_entity_location_data = None
 
         try:
             final_score = score_resume(job_entity_data, job_keyword_data, job_concept_data, resume_entity_data, resume_keyword_data, resume_concept_data, [])
