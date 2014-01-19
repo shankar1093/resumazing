@@ -171,7 +171,7 @@ def doJobQuery():
     
     return jsonify(**data)
 
-
+# Input: a list of all entity objects whose type is Degree for both inputs
 def determine_degree_match(job_degrees, applicant_degrees):
 	return 1. #Return 0.0 if no match, 1.0 if match, 1.5 if requirements exceeded
 	
@@ -209,15 +209,23 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
 def doQuery():
     format = request.form['format']
 
-    # Job Listing URL
-    job_url = request.form['url']
-    if not job_url:
-        return "Need url parameter"
+    url_or_text = request.form['url_or_text']
+    if not url_or_text:
+        return "Need url or text parameter"
 
-    # Get Job Listing URL data
-    job_entity_data = get_entities('url', job_url)
-    job_keyword_data = get_keywords('url', job_url)
-    job_concept_data = get_concepts('url', job_url)
+    if url_or_text.startswith('http://'):
+        # Job Listing URL
+        job_url = url_or_text
+        # Get Job Listing URL data
+        job_entity_data = get_entities('url', job_url)
+        job_keyword_data = get_keywords('url', job_url)
+        job_concept_data = get_concepts('url', job_url)
+    else:
+        job_text = url_or_text
+        # Get Job Listing URL data
+        job_entity_data = get_entities('text', job_text)
+        job_keyword_data = get_keywords('text', job_text)
+        job_concept_data = get_concepts('text', job_text)
 
     # Filter out City, StateOrCounty
     job_entity_location_data = filter(lambda x: x[2] in ["City", "StateOrCounty"],
