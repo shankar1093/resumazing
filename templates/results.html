@@ -39,64 +39,92 @@
 <div id="s_results_title">Resumazing</div>
 <div id="subtitle">Leveraging data to make you stand out.</div>
 <script>
+var fill = d3.scale.ordinal()
+        .range(["red","green"])
+        .domain([0,1]);
 
- var fill = d3.scale.ordinal()
-            .range(["red","green"])
-            .domain([0,1]);
+var data = {{ data|tojson|safe }};
 
-  var data = {{ data|tojson|safe }};
+var job = {"job_entity_data": data.job_entity_data,
+         "job_keyword_data": data.job_keyword_data,
+         "job_concept_data": data.job_concept_data};
 
-  var job = {"job_entity_data": data.job_entity_data,
-             "job_keyword_data": data.job_keyword_data,
-             "job_concept_data": data.job_concept_data};
+var resume = {"resume_entity_data": data.resume_entity_data,
+            "resume_keyword_data": data.resume_keyword_data,
+            "resume_concept_data": data.resume_concept_data};
 
-  var resume = {"resume_entity_data": data.resume_entity_data,
-                "resume_keyword_data": data.resume_keyword_data,
-                "resume_concept_data": data.resume_concept_data};
+var resume_cloud = [].concat.apply([], d3.values(resume));//resume data
 
-  var resume_cloud = [].concat.apply([], d3.values(resume));//resume data
+var job_cloud = [].concat.apply([], d3.values(job)); //job description data
 
-  var job_cloud = [].concat.apply([], d3.values(job)); //job description data
+var toGreen = {};
 
-  var test;
-  function draw(words) {
-    d3.select("#resume_graph").append("svg")
-        .attr("width", 300)
-        .attr("height", 300)
-      .append("g")
-        .attr("transform", "translate(150,150)")
-      .selectAll("text")
-        .data(words)
-      .enter().append("text")
-        .style("font-size", function(d) { return d.size + "px"; })
-        .style("font-family", "Impact")
-        .style("fill", function(d, i) { return fill(i); })
-
-        .attr("text-anchor", "middle")
-        .attr("transform", function(d) {
-          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-        })
-        .text(function(d) { return d.text; });
+function determine_string_match(job_string, applicant_string){
+  applicant_string = applicant_string.trim().toLowerCase();
+  job_string = job_string.trim().toLowerCase();
+  if ( applicant_string.indexOf(job_string.toLowerCase()) >= 0 || job_string.indexOf(applicant_string.toLowerCase()) >= 0 ) {
+    return 1.0;
   }
-  function draw2(words) {
-    d3.select("#job_graph").append("svg")
-        .attr("width", 300)
-        .attr("height", 300)
-      .append("g")
-        .attr("transform", "translate(150,150)")
-      .selectAll("text")
-        .data(words)
-      .enter().append("text")
-        .style("font-size", function(d) { return d.size + "px"; })
-        .style("font-family", "Impact")
-        .style("fill", function(d, i) { return fill(i); })
 
-        .attr("text-anchor", "middle")
-        .attr("transform", function(d) {
-          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-        })
-        .text(function(d) { return d.text; });
+  var words_app = applicant_string.split(' ');
+  var words_job = job_string.split(' ');
+  n = Math.min(words_job.length, words_app.length); // # of words
+  if (n == 0) { return 0.0; 
   }
+  var c = 0;
+  for (appword in words_app) {
+    if (appword in words_job) {
+      c += 1;
+    }
+  }
+  return 0.5 * c/n;
+}
+
+function draw_resume(words) {
+  d3.select("#resume_graph").append("svg")
+      .attr("width", 300)
+      .attr("height", 300)
+    .append("g")
+      .attr("transform", "translate(150,150)")
+    .selectAll("text")
+      .data(words)
+    .enter().append("text")
+      .style("font-size", function(d) { return d.size + "px"; })
+      .style("font-family", "Impact")
+      // .style("fill", "green")
+      .style("fill", function(d) { 
+        if (toGreen[d.text] == undefined) {return "red";}
+        else {return "green";}
+      })
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+        .text(function(d) { return d.text; });
+}
+
+function draw_job(words) {
+  d3.select("#job_graph").append("svg")
+      .attr("width", 300)
+      .attr("height", 300)
+    .append("g")
+      .attr("transform", "translate(150,150)")
+    .selectAll("text")
+      .data(words)
+    .enter().append("text")
+      .style("font-size", function(d) { return d.size + "px"; })
+      .style("font-family", "Impact")
+      // .style("fill", "green")
+      .style("fill", function(d) { 
+        if (toGreen[d.text] == undefined) {return "red";}
+        else {return "green";}
+      })
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+        .text(function(d) { return d.text; });
+}
 </script>
 
 <hr>
@@ -105,22 +133,25 @@
 
 <script>
   d3.layout.cloud().size([300, 300])
-  
-      .words(resume_cloud.map(function(d) {
-          if(d[1]==0.6482){
-            d[1] = 1;
-          }
-          else{
-            d[1]=0.2;
+      .words(job_cloud.map(function(d) {
+          var x;
+          for(x in resume_cloud){
+            if( d[0]==resume_cloud[x] || determine_string_match(d[0], resume_cloud[x][0]) > 0.5){
+              toGreen[d[0]] = 1;
+              d[1] = 0.8;
+            }
+            else{
+              d[1] = 0.6;
+            }
           }
 
-        return {text: d[0], size:d[1]*40};
+          return {text: d[0], size:d[1]*41};
       }))
       .padding(5)
       .rotate(function() { return ~~(Math.random() * 2) * 87; })
       .font("Impact")
       .fontSize(function(d) { return d.size; })
-      .on("end", draw2)
+      .on("end", draw_job)
       .start();
 </script>
 <div id="section_subtitle">Based on all the data we’ve gathered, it looks like these are the ten most important things they want to see. The
@@ -132,23 +163,25 @@ The red ones are what we think you could use some work on.</div>
 <div id="resume_graph" class="wordgraph"></div>
 <script>
     d3.layout.cloud().size([300, 300])
-  
-      .words(job_cloud.map(function(d) {
-          if(d[1]>0.4){
-            test = 1;
-          }
-          else{
-            test=0;
+        .words(resume_cloud.map(function(d) {
+          var x;
+          for(x in job_cloud){
+            if( d[0]==job_cloud[x] || determine_string_match(d[0], job_cloud[x][0]) > 0.5){
+              toGreen[d[0]] = 1;
+              d[1] = 0.8;
+            }
+            else{
+              d[1] = 0.6;
+            }
           }
 
-
-        return {text: d[0], size:d[1]*41};
+          return {text: d[0], size:d[1]*40};      
       }))
       .padding(5)
       .rotate(function() { return ~~(Math.random() * 2) * 87; })
       .font("Impact")
       .fontSize(function(d) { return d.size; })
-      .on("end", draw)
+      .on("end", draw_resume)
       .start();
 </script>
 <div id="section_subtitle">Looking at your resume, these are the ten phrases that stood out the most to us. Again, the bigger the phrase,
