@@ -5,12 +5,13 @@
 </head>
 <body>
 <form name="input" action="/query" method="POST" enctype=multipart/form-data>
-    <p>Paste Job Listing URL: <input type="text" name="url"></p>
+    <p>Paste Job Listing URL or Text of Job Description:</p>
+    <p><textarea cols="80" rows="20" name="url_or_text"></textarea></p>
     <p>Upload Resume PDF: <input type=file name=file></p>
-    <p>
+    <!-- <p>
         <input type="radio" name="format" value="html" checked>HTML<br/>
         <input type="radio" name="format" value="json">JSON
-    </p>
+    </p> -->
     <input type=submit value="Submit">
 </form>
 
