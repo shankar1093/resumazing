@@ -273,16 +273,22 @@ def doQuery():
         except Exception, e:
             print "Error generating final score", e
             final_score = -1
-
-        data = {"final_score": final_score,
-                "job_entity_data": job_entity_data, 
-                "job_keyword_data": job_keyword_data, 
-                "job_concept_data": job_concept_data,
-                "job_entity_location_data": job_entity_location_data,
-                "resume_entity_data": resume_entity_data,
-                "resume_keyword_data": resume_keyword_data,
-                "resume_concept_data": resume_concept_data,
-                "resume_entity_location_data": resume_entity_location_data}
+    else:
+        final_score = -1
+        resume_entity_data = None
+        resume_entity_location_data = None
+        resume_keyword_data = None
+        resume_concept_data = None
+    
+    data = {"final_score": final_score,
+            "job_entity_data": job_entity_data, 
+            "job_keyword_data": job_keyword_data, 
+            "job_concept_data": job_concept_data,
+            "job_entity_location_data": job_entity_location_data,
+            "resume_entity_data": resume_entity_data,
+            "resume_keyword_data": resume_keyword_data,
+            "resume_concept_data": resume_concept_data,
+            "resume_entity_location_data": resume_entity_location_data}
     if format == 'json':
         return jsonify(**data)
     else:
