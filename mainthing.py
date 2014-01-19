@@ -236,7 +236,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
 	if len(clusters) > 0: 
 		cluster = filter(lambda x : company in x, clusters)
 		cluster_score = 1.0 if len(set(applicant_organizations) & set(cluster)) > 0 else 0.
-	else
+	else:
 		cluster_score = 0.
 		denominator -= 1.
 	
