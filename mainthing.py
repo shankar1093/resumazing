@@ -243,7 +243,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
     #Points for using relevant keywords
 	if len(job_keywords) > 0 and len(applicant_keywords) > 0:
 		combinations = [[(x, y) for x in map(text, job_keywords)] for y in map(text, applicant_keywords)]
-		keyword_score = max(3., sum([determine_string_match(x, y) for (x, y) in combinations]))\
+		keyword_score = max(3., sum([determine_string_match(x, y) for (x, y) in combinations]))
 	else:
 		keyword_score = 0.
 		denominator -= 3.
