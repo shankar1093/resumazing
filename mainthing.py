@@ -44,7 +44,7 @@ def allowed_file(filename):
 
 @app.route('/')
 def main_page():
-    return render_template('index.html')
+    return render_template('index.html', resume=u'résumé')
 
 @app.route('/test', methods=['GET', 'POST'])
 def upload_file():
