@@ -211,64 +211,81 @@ def determine_degree_match(job_degrees, applicant_degrees):
     # return 1. #Return 0.0 if no match, 1.0 if match, 1.5 if requirements exceeded
     
 def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, applicant_keywords, applicant_concepts, clusters):    
-	text = lambda x: x[0]
-	denominator = 10.
-	
+    text = lambda x: x[0]
+    denominator = 10.
+    print "DATA:"
+    print job_entities
+    print job_keywords
+    print job_concepts
+    print applicant_entities
+    print applicant_keywords
+    print applicant_concepts
+    print clusters
+    print "----"
+    if not job_entities:
+        job_entities = []
+    if not applicant_entities:
+        applicant_entities = []
+        
     #Points for having a relevant degree
-	job_degrees = map(text,filter(lambda x : x[2] == 'ProfessionalDegree', job_entities))
-	applicant_degrees = map(text, filter(lambda x : x[2] == 'ProfessionalDegree', applicant_entities))
-	if len(job_degrees) > 0 and len(applicant_degrees) > 0:
-		degree_score = determine_degree_match(job_degrees, applicant_degrees)
-	else:
-		degree_score = 0.
-		denominator -= 1.5
-	
+    job_degrees = map(text,filter(lambda x : x[2] == 'ProfessionalDegree', job_entities))
+    applicant_degrees = map(text, filter(lambda x : x[2] == 'ProfessionalDegree', applicant_entities))
+    if len(job_degrees) > 0 and len(applicant_degrees) > 0:
+        degree_score = determine_degree_match(job_degrees, applicant_degrees)
+    else:
+        degree_score = 0.
+        denominator -= 1.5
+    
     #Points for having relevant job experience
-	job_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', job_entities))
-	applicant_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', applicant_entities))
-	if len(job_job_titles) > 0 and len(applicant_job_titles) > 0:
-		combinations = [[(x, y) for x in job_job_titles] for y in applicant_job_titles]
-		job_title_score = max([determine_job_title_match(x, y) for subcoms in combinations for (x, y) in subcoms])
-	else:
-		job_title_score = 0.
-		denominator -= 2.
-	
+    job_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', job_entities))
+    applicant_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', applicant_entities))
+    if len(job_job_titles) > 0 and len(applicant_job_titles) > 0:
+        combinations = [[(x, y) for x in job_job_titles] for y in applicant_job_titles]
+        job_title_score = max([determine_job_title_match(x, y) for subcoms in combinations for (x, y) in subcoms])
+    else:
+        job_title_score = 0.
+        denominator -= 2.
+    
     #Points for referencing relevant organizations or companies
-	job_organizations = map(text,filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', job_entities))
-	applicant_organizations = map(text, filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', applicant_entities))
-	if len(job_organizations) > 0 and len(applicant_organizations) > 0:
-		combinations = [[(x, y) for x in job_organizations] for y in applicant_organizations]
-		organization_score = 0.5 * max([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms])	
-	else:
-		organization_score = 0.
-		denominator -= 0.5
-	
+    job_organizations = map(text,filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', job_entities))
+    applicant_organizations = map(text, filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', applicant_entities))
+    if len(job_organizations) > 0 and len(applicant_organizations) > 0:
+        combinations = [[(x, y) for x in job_organizations] for y in applicant_organizations]
+        organization_score = 0.5 * max([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms])    
+    else:
+        organization_score = 0.
+        denominator -= 0.5
+    
     #Points for working for company in same cluster
-	if len(clusters) > 0: 
-		cluster = filter(lambda x : company in x, clusters)
-		cluster_score = 1.0 if len(set(applicant_organizations) & set(cluster)) > 0 else 0.
-	else:
-		cluster_score = 0.
-		denominator -= 1.
-	
+    if len(clusters) > 0: 
+        cluster = filter(lambda x : company in x, clusters)
+        cluster_score = 1.0 if len(set(applicant_organizations) & set(cluster)) > 0 else 0.
+    else:
+        cluster_score = 0.
+        denominator -= 1.
+    
     #Points for using relevant keywords
-	if len(job_keywords) > 0 and len(applicant_keywords) > 0:
-		combinations = [[(x, y) for x in map(text, job_keywords)] for y in map(text, applicant_keywords)]
-		keyword_score = max(3., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
-	else:
-		keyword_score = 0.
-		denominator -= 3.
-	
+    if job_keywords and len(job_keywords) > 0 and applicant_keywords and len(applicant_keywords) > 0:
+        combinations = [[(x, y) for x in map(text, job_keywords)] for y in map(text, applicant_keywords)]
+        keyword_score = max(3., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
+    else:
+        keyword_score = 0.
+        denominator -= 3.
+    
     #Points for using relevant concepts
-	if len(job_concepts) > 0 and len(applicant_concepts) > 0:
-		combinations = [[(x, y) for x in map(text, job_concepts)] for y in map(text, applicant_concepts)]
-		concept_score = max(2., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
-	else:
-		concept_score = 0.
-		denominator -= 2.
-	final_score = (degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score) / denominator
-	
-	return final_score
+    if job_concepts and len(job_concepts) > 0 and applicant_concepts and len(applicant_concepts) > 0:
+        combinations = [[(x, y) for x in map(text, job_concepts)] for y in map(text, applicant_concepts)]
+        concept_score = max(2., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
+    else:
+        concept_score = 0.
+        denominator -= 2.
+    
+    if denominator == 0:
+        # No data was given.
+        return None
+    final_score = (degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score) / denominator
+    
+    return final_score
 
 
 @app.route("/query", methods=['POST'])
@@ -281,7 +298,7 @@ def doQuery():
 
     # print url_or_text
 
-    if url_or_text.startswith('http://'):
+    if url_or_text.startswith('http://') or url_or_text.startswith('https://'):
         # Job Listing URL
         job_url = url_or_text
         # Get Job Listing URL data
@@ -319,6 +336,10 @@ def doQuery():
 
         # Get text from PDF file
         resume_text = getPDFContent(filepath)
+
+        print "PDF TEXT:"
+        print resume_text
+        print
 
         # Get PDF text data
         resume_entity_data = get_entities('text', resume_text)
