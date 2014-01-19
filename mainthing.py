@@ -217,7 +217,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
 	applicant_job_titles = map(text,filter(lambda x : x[2] == 'JobTitle', applicant_entities))
 	if len(job_job_titles) > 0 and len(applicant_job_titles) > 0:
 		combinations = [[(x, y) for x in job_job_titles] for y in applicant_job_titles]
-		job_title_score = max([determine_job_title_match(x, y) for (x, y) in combinations])
+		job_title_score = max([determine_job_title_match(x, y) for subcoms in combinations for (x, y) in subcoms])
 	else:
 		job_title_score = 0.
 		denominator -= 2.
@@ -227,7 +227,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
 	applicant_organizations = map(text, filter(lambda x : x[2] == 'Organization' or x[2] == 'Company', applicant_entities))
 	if len(job_organizations) > 0 and len(applicant_organizations) > 0:
 		combinations = [[(x, y) for x in job_organizations] for y in applicant_organizations]
-		organization_score = 0.5 * max([determine_string_match(x, y) for (x, y) in combinations])	
+		organization_score = 0.5 * max([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms])	
 	else:
 		organization_score = 0.
 		denominator -= 0.5
@@ -243,7 +243,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
     #Points for using relevant keywords
 	if len(job_keywords) > 0 and len(applicant_keywords) > 0:
 		combinations = [[(x, y) for x in map(text, job_keywords)] for y in map(text, applicant_keywords)]
-		keyword_score = max(3., sum([determine_string_match(x, y) for (x, y) in combinations]))
+		keyword_score = max(3., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
 	else:
 		keyword_score = 0.
 		denominator -= 3.
@@ -251,7 +251,7 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
     #Points for using relevant concepts
 	if len(job_concepts) > 0 and len(applicant_concepts) > 0:
 		combinations = [[(x, y) for x in map(text, job_concepts)] for y in map(text, applicant_concepts)]
-		concept_score = max(2., sum([determine_string_match(x, y) for (x, y) in combinations]))
+		concept_score = max(2., sum([determine_string_match(x, y) for subcoms in combinations for (x, y) in subcoms]))
 	else:
 		concept_score = 0.
 		denominator -= 2.
@@ -323,11 +323,11 @@ def doQuery():
         else:
             resume_entity_location_data = None
 
-        try:
-            final_score = score_resume(job_entity_data, job_keyword_data, job_concept_data, resume_entity_data, resume_keyword_data, resume_concept_data, [])
-        except Exception, e:
-            print "Error generating final score", e
-            final_score = -1
+        # try:
+        final_score = score_resume(job_entity_data, job_keyword_data, job_concept_data, resume_entity_data, resume_keyword_data, resume_concept_data, [])
+        # except Exception, e:
+        #     print "Error generating final score", e
+        #     final_score = -1
     else:
         final_score = -1
         resume_entity_data = None
