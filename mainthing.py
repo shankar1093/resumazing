@@ -14,6 +14,16 @@ import sys
 import pyPdf
 import json
 
+import matplotlib.pyplot as plt
+
+from matplotlib import rcParams
+
+rcParams['lines.linewidth'] = 2
+rcParams['axes.grid'] = False
+rcParams['axes.facecolor'] = 'white'
+rcParams['patch.edgecolor'] = 'none'
+rcParams['font.size'] = 18
+
 from alchemyapi import AlchemyAPI
 alchemyapi = AlchemyAPI()
 
@@ -293,7 +303,53 @@ def score_resume(job_entities, job_keywords, job_concepts, applicant_entities, a
     final_score = 10. * (degree_score + job_title_score + organization_score + cluster_score + keyword_score + concept_score) / denominator
     
     return final_score
+	
+def remove_border(axes=None, top=False, right=False, left=True, bottom=True):
+    """
+    Minimize chartjunk by stripping out unnecessary plot borders and axis ticks
+    
+    The top/right/left/bottom keywords toggle whether the corresponding plot border is drawn
+    """
+    ax = axes or plt.gca()
+    ax.spines['top'].set_visible(top)
+    ax.spines['right'].set_visible(right)
+    ax.spines['left'].set_visible(left)
+    ax.spines['bottom'].set_visible(bottom)
+    
+    #turn off all ticks
+    ax.yaxis.set_ticks_position('none')
+    ax.xaxis.set_ticks_position('none')
+    
+    #now re-enable visibles
+    if top:
+        ax.xaxis.tick_top()
+    if bottom:
+        ax.xaxis.tick_bottom()
+    if left:
+        ax.yaxis.tick_left()
+    if right:
+        ax.yaxis.tick_right()
 
+def draw_spectrum(scores):
+	bins = range(1,8)
+	fig = plt.figure()
+	ax = plt.gca()
+	ax.bar(range(7), scores, color=['b','y','aqua','m','g','indigo','r'])
+	remove_border()
+	ax.set_ylim([0,10])
+	ax.set_xlabel('Group of Companies')
+	ax.set_ylabel('Compatibility with Group')
+	ax.set_title('Your Personal Spectrum of Performance')
+	plt.show()
+	savefig('/home/sam/spectrum.png')
+	
+def generate_group_scores(applicant_entities, applicant_keywords, applicant_concepts):
+	f = file['data.json']
+	json_data=open(file)
+	data = json.load(json_data)
+	scores = [score_resume(data[str(i)]['entities'], data[str(i)]['keywords'], data[str(i)]['concepts'], applicant_entities, applicant_keywords, applicant_concepts) for i in range(len(data))]
+	draw_spectrum(scores)
+	return scores
 
 @app.route("/query", methods=['POST'])
 def doQuery():
