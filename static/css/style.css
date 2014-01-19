@@ -25,14 +25,16 @@ html,body {
 	font-family: sans-serif;
 	line-height:1.25em;
 }
-
+.sigma-all {
+	position: relative;
+}
 .sigma-parent {
-	/*position: relative;*/
-	height: 100%;
+	position: relative;
+	height: 800px;
 }
 
 .sigma-expand {
-	/*position: absolute;*/
+	position: absolute;
 	width: 100%;
 	height: 100%;
 	top: 0;
