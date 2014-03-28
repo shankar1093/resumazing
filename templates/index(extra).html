@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resumazing: Get noticed.</title>
+    <meta charset="utf-8">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+<div id="s_title">Resumazing</div>
+<div id="subtitle">Get noticed.</div>
+<div id="Wrapper">
+
+
+<form name="input" action="/query" method="POST" enctype=multipart/form-data>
+    
+    <input name="file" type="file" class="button" multiple>
+
+    <p><textarea name="url_or_text" rows="10" cols="10" placeholder="Paste a job description, or the URL where it can be found."></textarea></p>
+
+    <input type=submit value="Submit">
+</form>
+</div>
+<a href="http://www.alchemyapi.com/" id="logo"></a>
+<!-- <div id="about">What do we do?</div> -->
+
+</body>
+
+</html>

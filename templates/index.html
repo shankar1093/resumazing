@@ -1,28 +1,129 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Resumazing: Get noticed.</title>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='main.css') }}">
-</head>
-<body>
-<div id="s_title">Resumazing</div>
-<div id="subtitle">Get noticed.</div>
-<div id="Wrapper">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Samuel Ellis">
+    <link rel="shortcut icon" href="..static/img/favicon.ico">
+
+    <title>Resumazing &middot; Get Noticed</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="static/fonts/font-awesome.min.css">
+
+    <!-- Custom styles for this template -->
+    <link href="../static/css/main.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#" style="font-size: 20px;">Resumazing</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          <form class="navbar-form navbar-right" role="form">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-signin">Sign in</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
 
 
-<form name="input" action="/query" method="POST" enctype=multipart/form-data>
-    
-    <input name="file" type="file" class="button" multiple>
 
-    <p><textarea name="url_or_text" rows="10" cols="10" placeholder="Paste a job description, or the URL where it can be found."></textarea></p>
+    <div class="jumbotron" style="padding: 20px; margin-bottom: 0px">
+      <div id="banner" class="container">
+        <h1 id="s_header">Resumazing</h1>
+        <p id="notice">Get noticed.</p>
+        <p><a href="about.html" class="btn btn-learn btn-lg" role="button">Learn more &raquo;</a></p>
+      </div>
+    </div>
 
-    <input type=submit value="Submit">
-</form>
-</div>
-<a href="http://www.alchemyapi.com/" id="logo"></a>
-<!-- <div id="about">What do we do?</div> -->
+    <div class="jumbotron" id="resume-upload">
+      <div id="banner" class="container">
+        <p style="font-family=\'PT Sans\'">Please upload your Resume:</p>
+        <form name="input" action="/query" method="POST" enctype=multipart/form-data>
+        <p>  
+          <input id="upload-file" name="file" type="file" class="btn btn-upload btn-lg">
+        </p>
+        <p><textarea id="job-desc" name="url_or_text" rows="10" cols="10" placeholder="Paste a job description, or the URL where it can be found."></textarea></p>
+        <p>
+          <input class="btn btn-lg btn-upload btn-submit" type=submit value="Submit">
+        </p>
+        </form>
+      </div>
+    </div>
 
-</body>
 
+
+
+    <div id="footer">
+      <div class="container">
+        <div class="col-lg-8">
+          <p class="footer-links">
+            <a href="#">ABOUT</a>
+            <a href="#">AWARDS</a>
+            <a href="#">FAQS</a>
+            <a href="#">SUPPORT</a>
+          </p>
+          <a href="http://www.alchemyapi.com/" target="_blank"><img class="alchemypic" src="static/img/PoweredByAlchemyAPI.png"></a>
+        </div>
+        <div class="col-lg-4">
+          <a href="https://www.facebook.com" target="_blank">
+            <span class="icon-holder">
+              <i class="fa fa-facebook"></i>
+            </span>
+          </a>
+          <a href="https://linkedin.com" target="_blank">
+            <span class="icon-holder">
+              <i class="fa fa-linkedin"></i>
+            </span>
+          </a>
+          <a href="https://www.twitter.com" target="_blank">
+            <span class="icon-holder">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          <a href="https://github.com" target="_blank">
+            <span class="icon-holder">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+  </body>
 </html>

@@ -43,7 +43,7 @@ def getPDFContent(path):
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = '/home/sam/files'
+UPLOAD_FOLDER = '/Users/shankar1093/Resumazing/resumazing'
 ALLOWED_EXTENSIONS = set(['pdf'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -454,4 +454,4 @@ def doQuery():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

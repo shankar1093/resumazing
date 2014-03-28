@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Samuel Ellis">
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="{{ url_for('static', filename='d3.layout.cloud.js') }}"></script>
+    <script src="{{ url_for('static', filename='colorbrewer.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/jquery/jquery.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/sigma/sigma.min.js') }}" type="text/javascript" language="javascript"></script>
+    <script src="{{ url_for('static', filename='js/sigma/sigma.parseJson.js') }}" type="text/javascript" language="javascript"></script>
+    <script src="{{ url_for('static', filename='js/fancybox/jquery.fancybox.pack.js') }}" type="text/javascript" language="javascript"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" language="javascript"></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='js/fancybox/jquery.fancybox.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" media="screen" />
+    <link rel="stylesheet" media="screen and (max-height: 770px)" href="{{ url_for('static', filename='css/tablet.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}"/>
+    <link rel="shortcut icon" href="files/img/favicon.ico">
+
+    <title>Resumazing &middot; Get Noticed</title>
+    div id="s_results_title">Resumazing</div>
+    <div id="subtitle">Leveraging data to make you stand out.</div>
+    <script>
+    var fill = d3.scale.ordinal()
+            .range(["red","green"])
+            .domain([0,1]);
+
+    var data = {{ data|tojson|safe }};
+
+    var job = {"job_entity_data": data.job_entity_data,
+             "job_keyword_data": data.job_keyword_data,
+             "job_concept_data": data.job_concept_data};
+
+    var resume = {"resume_entity_data": data.resume_entity_data,
+                "resume_keyword_data": data.resume_keyword_data,
+                "resume_concept_data": data.resume_concept_data};
+
+    var resume_cloud = [].concat.apply([], d3.values(resume));//resume data
+
+    var job_cloud = [].concat.apply([], d3.values(job)); //job description data
+
+    var toGreen = {};
+
+    function determine_string_match(job_string, applicant_string){
+      applicant_string = applicant_string.trim().toLowerCase();
+      job_string = job_string.trim().toLowerCase();
+      if ( applicant_string.indexOf(job_string.toLowerCase()) >= 0 || job_string.indexOf(applicant_string.toLowerCase()) >= 0 ) {
+        return 1.0;
+      }
+
+      var words_app = applicant_string.split(' ');
+      var words_job = job_string.split(' ');
+      n = Math.min(words_job.length, words_app.length); // # of words
+      if (n == 0) { return 0.0; 
+      }
+      var c = 0;
+      for (appword in words_app) {
+        if (appword in words_job) {
+          c += 1;
+        }
+      }
+      return 0.5 * c/n;
+    }
+
+    function draw_resume(words) {
+      d3.select("#resume_graph").append("svg")
+          .attr("width", 300)
+          .attr("height", 300)
+        .append("g")
+          .attr("transform", "translate(150,150)")
+        .selectAll("text")
+          .data(words)
+        .enter().append("text")
+          .style("font-size", function(d) { return d.size + "px"; })
+          .style("font-family", "Impact")
+          // .style("fill", "green")
+          .style("fill", function(d) { 
+            if (toGreen[d.text] == undefined) {return "red";}
+            else {return "green";}
+          })
+          .attr("text-anchor", "middle")
+          .attr("transform", function(d) {
+            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+          })
+            .text(function(d) { return d.text; });
+    }
+
+    function draw_job(words) {
+      d3.select("#job_graph").append("svg")
+          .attr("width", 300)
+          .attr("height", 300)
+        .append("g")
+          .attr("transform", "translate(150,150)")
+        .selectAll("text")
+          .data(words)
+        .enter().append("text")
+          .style("font-size", function(d) { return d.size + "px"; })
+          .style("font-family", "Impact")
+          // .style("fill", "green")
+          .style("fill", function(d) { 
+            if (toGreen[d.text] == undefined) {return "red";}
+            else {return "green";}
+          })
+          .attr("text-anchor", "middle")
+          .attr("transform", function(d) {
+            return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+          })
+            .text(function(d) { return d.text; });
+    }
+    </script>
+
+    <hr>
+    <div id="section_title">Here’s what we think your potential employer is looking for.</div>
+    <div id="job_graph" class="wordgraph"></div>
+
+    <script>
+      d3.layout.cloud().size([300, 300])
+          .words(job_cloud.map(function(d) {
+              var x;
+              for(x in resume_cloud){
+                if( d[0]==resume_cloud[x] || determine_string_match(d[0], resume_cloud[x][0]) > 0.5){
+                  toGreen[d[0]] = 1;
+                  d[1] = 0.8;
+                }
+                else{
+                  d[1] = 0.6;
+                }
+              }
+
+              return {text: d[0], size:d[1]*41};
+          }))
+          .padding(5)
+          .rotate(function() { return ~~(Math.random() * 2) * 87; })
+          .font("Impact")
+          .fontSize(function(d) { return d.size; })
+          .on("end", draw_job)
+          .start();
+    </script>
+    <div id="section_subtitle">Based on all the data we’ve gathered, it looks like these are the ten most important things they want to see. The
+    larger the phrase is, the more relevant. Green phrases are ones we think you’re already hitting on pretty well.
+    The red ones are what we think you could use some work on.</div>
+
+    <hr>
+    <div id="section_title">Here’s what we’ve gathered about you.</div>
+    <div id="resume_graph" class="wordgraph"></div>
+    <script>
+        d3.layout.cloud().size([300, 300])
+            .words(resume_cloud.map(function(d) {
+              var x;
+              for(x in job_cloud){
+                if( d[0]==job_cloud[x] || determine_string_match(d[0], job_cloud[x][0]) > 0.5){
+                  toGreen[d[0]] = 1;
+                  d[1] = 0.8;
+                }
+                else{
+                  d[1] = 0.6;
+                }
+              }
+
+              return {text: d[0], size:d[1]*40};      
+          }))
+          .padding(5)
+          .rotate(function() { return ~~(Math.random() * 2) * 87; })
+          .font("Impact")
+          .fontSize(function(d) { return d.size; })
+          .on("end", draw_resume)
+          .start();
+    </script>
+    <div id="section_subtitle">Looking at your resume, these are the ten phrases that stood out the most to us. Again, the bigger the phrase,
+    the more it stood out. The words in green are the ones we think your potential employer will be most excited
+    about. We think they might care about the red ones a litte less.</div>
+
+    <hr>
+    <div id="section_title">Based on these results, we think there’s roughly a {{ data.final_score }}/10.00
+    chance that you’ll pass their automated resume screening.</div>
+    <!-- Bootstrap core CSS -->
+    <link href="files/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="files/fonts/font-awesome.min.css">
+
+    <!-- Custom styles for this template -->
+    <link href="files/css/main.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#" style="font-size: 20px;">Resumazing</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          <form class="navbar-form navbar-right" role="form">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-signin">Sign in</button>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+
+
+
+    <div class="jumbotron" style="padding: 20px; margin-bottom: 0px">
+      <div id="banner" class="container">
+        <h1 id="s_header">Resumazing</h1>
+        <p id="notice">Get noticed.</p>
+        <p><a class="btn btn-learn btn-lg" role="button">Learn more &raquo;</a></p>
+      </div>
+    </div>
+
+    <div class="jumbotron" id="resume-upload">
+      <div id="banner" class="container">
+        <p><a class="btn btn-upload btn-lg" role="button">Upload your resume:</a></p>
+        <p><textarea name="url_or_text" rows="10" cols="10" placeholder="Paste a job description, or the URL where it can be found."></textarea></p>
+        <p><a class="btn btn-upload btn-submit btn-lg" role="button">Submit</a></p>
+      </div>
+    </div>
+
+
+
+
+    <div id="footer">
+      <div class="container">
+        <div class="col-lg-8">
+          <p class="footer-links">
+            <a href="#">ABOUT</a>
+            <a href="#">AWARDS</a>
+            <a href="#">FAQS</a>
+            <a href="#">SUPPORT</a>
+          </p>
+          <a href="http://www.alchemyapi.com/" target="_blank"><img class="alchemypic" src="files/img/PoweredByAlchemyAPI.png"></a>
+        </div>
+        <div class="col-lg-4">
+          <a href="https://www.facebook.com" target="_blank">
+            <span class="icon-holder">
+              <i class="fa fa-facebook"></i>
+            </span>
+          </a>
+          <a href="https://linkedin.com" target="_blank">
+            <span class="icon-holder">
+              <i class="fa fa-linkedin"></i>
+            </span>
+          </a>
+          <a href="https://www.twitter.com" target="_blank">
+            <span class="icon-holder">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+          <a href="https://github.com" target="_blank">
+            <span class="icon-holder">
+              <i class="fa fa-github"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="files/js/bootstrap.min.js"></script>
+  </body>
+</html>
