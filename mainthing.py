@@ -43,7 +43,7 @@ def getPDFContent(path):
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = '/Users/shankar1093/Resumazing/resumazing'
+UPLOAD_FOLDER = 'files'
 ALLOWED_EXTENSIONS = set(['pdf'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -437,7 +437,7 @@ def doQuery():
         resume_concept_data = None
         spectrum_scores = None
     
-    data = {"final_score": final_score,
+    data = {"final_score": round(final_score, 2),
             "spectrum_scores":spectrum_scores,
             "job_entity_data": job_entity_data, 
             "job_keyword_data": job_keyword_data, 
